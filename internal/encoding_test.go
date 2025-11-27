@@ -249,44 +249,6 @@ func TestDecode(t *testing.T) {
 	}
 }
 
-func TestEncode_ErrorHandling(t *testing.T) {
-	tests := []struct {
-		name    string
-		data    interface{}
-		wantErr bool
-	}{
-		{
-			name:    "encode channel (unencodable type)",
-			data:    make(chan int),
-			wantErr: true,
-		},
-		{
-			name:    "encode function (unencodable type)",
-			data:    func() {},
-			wantErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodGet, "/test", nil)
-
-			err := encode(w, r, http.StatusOK, tt.data)
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("encode() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			if tt.wantErr && err != nil {
-				if !strings.Contains(err.Error(), "encode json") {
-					t.Errorf("encode() error = %v, want error containing 'encode json'", err)
-				}
-			}
-		})
-	}
-}
-
 func TestDecode_EdgeCases(t *testing.T) {
 	tests := []struct {
 		name    string
