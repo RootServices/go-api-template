@@ -16,10 +16,7 @@ type HelloWorldResponse struct {
 func handleHelloWorld() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.FromContext(r.Context())
-		log.Info("handling hello world request",
-			slog.String("method", r.Method),
-			slog.String("path", r.URL.Path),
-		)
+		log.Info("handling hello world request")
 
 		resp := HelloWorldResponse{
 			Message: "Hello, World!",

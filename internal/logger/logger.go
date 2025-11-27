@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"go-api-template/internal/version"
@@ -16,6 +17,8 @@ const (
 	loggerKey        contextKey = "logger"
 	correlationIDKey string     = "correlation_id"
 	branchKey        string     = "branch"
+	pathKey          string     = "path"
+	methodKey        string     = "method"
 )
 
 // Init initializes the global logger with JSON output.
@@ -32,6 +35,10 @@ func Init(version version.Version) {
 // WithCorrelationID creates a new logger with the correlation ID attached.
 func WithCorrelationID(correlationID string) *slog.Logger {
 	return slog.Default().With(slog.String(correlationIDKey, correlationID))
+}
+
+func WithRequestInfo(r *http.Request) *slog.Logger {
+	return slog.Default().With(slog.String(pathKey, r.URL.Path), slog.String(methodKey, r.Method))
 }
 
 // ToContext adds a logger to the context.

@@ -40,3 +40,13 @@ func headerMiddleware(next http.Handler, version version.Version) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func structuredLoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		reqLogger := logger.WithRequestInfo(r)
+		ctx := logger.ToContext(r.Context(), reqLogger)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
+	})
+}

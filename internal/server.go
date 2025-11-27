@@ -11,10 +11,12 @@ import (
 func NewServer(version version.Version) http.Handler {
 	mux := http.NewServeMux()
 	addRoutes(mux, version)
-	var handler http.Handler = mux
+
+	var handlerWithRoutes http.Handler = mux
 	// Apply middleware
-	handler = headerMiddleware(handler, version)
-	return handler
+	handlerOne := structuredLoggingMiddleware(handlerWithRoutes)
+	handlerTwo := headerMiddleware(handlerOne, version)
+	return handlerTwo
 }
 
 func addRoutes(mux *http.ServeMux, version version.Version) {
