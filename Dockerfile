@@ -1,23 +1,20 @@
 # Build stage
-FROM golang:1.23 AS builder
+FROM golang:1.24 AS builder
 
 WORKDIR /app
 
-# Copy go.mod and go.sum (if exists) and download dependencies
-COPY go.mod ./
-RUN go mod download
-
 # Copy source code
 COPY . .
+COPY .git/ ./.git
 
 # Build the application
-RUN CGO_ENABLED=0 go build -o /server ./cmd/main.go
+RUN make build
 
 # Final stage
-FROM gcr.io/distroless/static-debian12
+FROM chainguard/glibc-dynamic:latest
 
 # Copy the binary from the build stage
-COPY --from=builder /server /server
+COPY --from=builder /app/bin/server /server
 
 # Expose the application port
 EXPOSE 8080
