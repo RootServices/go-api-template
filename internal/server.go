@@ -3,6 +3,8 @@ package internal
 import (
 	"net/http"
 
+	"github.com/gorilla/handlers"
+
 	"go-api-template/internal/version"
 )
 
@@ -10,13 +12,16 @@ import (
 // It takes dependencies as arguments (none in this simple example).
 func NewServer(version version.Version) http.Handler {
 	mux := http.NewServeMux()
+
 	addRoutes(mux, version)
 
 	var handlerWithRoutes http.Handler = mux
+
+	handlerWithCompression := handlers.CompressHandler(handlerWithRoutes)
+	handlerWithHeaders := headerMiddleware(handlerWithCompression, version)
+	handlerWithLogging := structuredLoggingMiddleware(handlerWithHeaders)
 	// Apply middleware
-	handlerOne := structuredLoggingMiddleware(handlerWithRoutes)
-	handlerTwo := headerMiddleware(handlerOne, version)
-	return handlerTwo
+	return handlerWithLogging
 }
 
 func addRoutes(mux *http.ServeMux, version version.Version) {

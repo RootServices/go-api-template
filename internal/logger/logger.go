@@ -19,6 +19,7 @@ const (
 	branchKey        string     = "branch"
 	pathKey          string     = "path"
 	methodKey        string     = "method"
+	statusCodeKey    string     = "status_code"
 )
 
 // Init initializes the global logger with JSON output.
