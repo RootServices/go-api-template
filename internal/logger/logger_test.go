@@ -5,6 +5,8 @@ import (
 	"context"
 	"log/slog"
 	"testing"
+
+	"go-api-template/internal/version"
 )
 
 func TestInit(t *testing.T) {
@@ -12,7 +14,12 @@ func TestInit(t *testing.T) {
 	oldDefault := slog.Default()
 	defer slog.SetDefault(oldDefault)
 
-	Init()
+	version := version.Version{
+		Build:  "test-build",
+		Branch: "test-branch",
+	}
+
+	Init(version)
 
 	// Verify that the default logger has been set
 	if slog.Default() == oldDefault {

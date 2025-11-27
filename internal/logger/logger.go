@@ -4,23 +4,29 @@ import (
 	"context"
 	"log/slog"
 	"os"
+
+	"go-api-template/internal/version"
 )
 
 // contextKey is a private type for context keys to avoid collisions.
 type contextKey string
 
 const (
+	buildKey         string     = "build"
 	loggerKey        contextKey = "logger"
 	correlationIDKey string     = "correlation_id"
+	branchKey        string     = "branch"
 )
 
 // Init initializes the global logger with JSON output.
 // This should be called once at application startup.
-func Init() {
+func Init(version version.Version) {
 	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
 	})
-	slog.SetDefault(slog.New(handler))
+	slog.SetDefault(slog.New(handler).
+		With(slog.String(buildKey, version.Build)).
+		With(slog.String(branchKey, version.Branch)))
 }
 
 // WithCorrelationID creates a new logger with the correlation ID attached.

@@ -14,11 +14,18 @@ import (
 
 	"go-api-template/internal"
 	"go-api-template/internal/logger"
+	"go-api-template/internal/version"
 )
 
 func main() {
+	// Get version information
+	version, err := version.Get()
+	if err != nil {
+		panic(err)
+	}
+
 	// Initialize structured logging
-	logger.Init()
+	logger.Init(version)
 
 	ctx := context.Background()
 	if err := run(ctx, os.Stdout, os.Args); err != nil {
