@@ -12,7 +12,7 @@ run: version
 	@echo "Building and running the application with build: $(BUILD)"
 	go run ./cmd/main.go
 
-test:
+test: version
 	go test -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out
 
