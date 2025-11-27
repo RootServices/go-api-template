@@ -1,18 +1,18 @@
 # Go API Template
 
-A production-ready Go REST API template built with best practices and modern standards. This template provides a solid foundation for building scalable HTTP APIs with structured logging, middleware support, and GCP integration.
+A Go REST API template built with best practices and modern standards. 
 
-## Features
+## Best Practices
 
-- ✅ **Clean Architecture** - Organized package structure following Go best practices
-- ✅ **Structured Logging** - Built-in `slog` integration with correlation IDs for request tracing
-- ✅ **Middleware Support** - Correlation ID middleware for distributed tracing
-- ✅ **GCP Secret Manager** - Secure secret management with repository pattern
-- ✅ **Health Checks** - Built-in health check endpoint
-- ✅ **Graceful Shutdown** - Proper signal handling and graceful server shutdown
-- ✅ **Docker Support** - Multi-stage Dockerfile with distroless final image
-- ✅ **Comprehensive Testing** - Unit tests with coverage reporting
-- ✅ **JSON Encoding** - Standardized JSON response handling
+This template follows best practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
+
+- Dependency injection through function parameters
+- Handler functions return `http.Handler` instead of using `http.HandlerFunc` directly
+- Centralized JSON encoding with error handling
+- Structured logging with context propagation
+- Graceful shutdown with signal handling
+- Repository pattern for external dependencies
+- Interface-based design for testability
 
 ## Project Structure
 
@@ -99,40 +99,6 @@ make build
 
 The compiled binary will be available at `bin/server`.
 
-## API Endpoints
-
-### `GET /api/hello`
-
-Returns a simple "Hello, World!" message.
-
-**Response:**
-```json
-{
-  "message": "Hello, World!"
-}
-```
-
-**Example:**
-```bash
-curl http://localhost:8080/api/hello
-```
-
-### `GET /healthz`
-
-Health check endpoint that returns the service status.
-
-**Response:**
-```json
-{
-  "status": "ok"
-}
-```
-
-**Example:**
-```bash
-curl http://localhost:8080/healthz
-```
-
 ## Configuration
 
 ### Environment Variables
@@ -197,37 +163,6 @@ docker run -p 8080:8080 \
 The Dockerfile uses a multi-stage build:
 1. **Builder stage**: Compiles the Go application
 2. **Final stage**: Uses distroless image for minimal attack surface and smaller image size
-
-## Development
-
-## Testing
-
-The project includes comprehensive unit tests for all components:
-
-- **Handlers**: Test HTTP request/response handling
-- **Middleware**: Test correlation ID injection and propagation
-- **GCP Secrets**: Test secret retrieval with mocked clients
-- **Logger**: Test context-based logger retrieval
-
-Run specific package tests:
-
-```bash
-go test ./internal/...
-go test ./internal/gcp/...
-go test -v ./internal/handlers_test.go
-```
-
-## Best Practices
-
-This template follows best practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
-
-- ✅ Dependency injection through function parameters
-- ✅ Handler functions return `http.Handler` instead of using `http.HandlerFunc` directly
-- ✅ Centralized JSON encoding with error handling
-- ✅ Structured logging with context propagation
-- ✅ Graceful shutdown with signal handling
-- ✅ Repository pattern for external dependencies
-- ✅ Interface-based design for testability
 
 ## Contributing
 
