@@ -28,17 +28,17 @@ func main() {
 	logger.Init(version)
 
 	ctx := context.Background()
-	if err := run(ctx, os.Stdout, os.Args); err != nil {
+	if err := run(ctx, os.Stdout, os.Args, version); err != nil {
 		slog.Error("application error", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, w io.Writer, args []string) error {
+func run(ctx context.Context, w io.Writer, args []string, version version.Version) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	srv := internal.NewServer()
+	srv := internal.NewServer(version)
 
 	// Use a configurable port or default to 8080
 	port := "8080"

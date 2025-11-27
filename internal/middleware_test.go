@@ -1,13 +1,15 @@
 package internal
 
 import (
-	"go-api-template/internal/logger"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"go-api-template/internal/logger"
+	"go-api-template/internal/version"
 )
 
-func TestCorrelationIDMiddleware(t *testing.T) {
+func TestHeaderMiddleware(t *testing.T) {
 	tests := []struct {
 		name                  string
 		existingCorrelationID string
@@ -39,8 +41,12 @@ func TestCorrelationIDMiddleware(t *testing.T) {
 				w.WriteHeader(http.StatusOK)
 			})
 
+			expectedVersion := version.Version{
+				Build:  "test-build",
+				Branch: "test-branch",
+			}
 			// Wrap the handler with the middleware
-			handler := correlationIDMiddleware(testHandler)
+			handler := headerMiddleware(testHandler, expectedVersion)
 
 			// Create a request
 			req := httptest.NewRequest(http.MethodGet, "/test", nil)
@@ -51,30 +57,40 @@ func TestCorrelationIDMiddleware(t *testing.T) {
 
 			handler.ServeHTTP(w, req)
 
-			responseCorrelationID := w.Header().Get(CorrelationIDHeader)
+			actualCorrelationID := w.Header().Get(CorrelationIDHeader)
+			actualBuild := w.Header().Get(BuildHeader)
+			actualBranch := w.Header().Get(BranchHeader)
 
 			if tt.wantPreserved {
 				// Verify the existing correlation-id is preserved
-				if responseCorrelationID != tt.existingCorrelationID {
-					t.Errorf("expected correlation-id %q to be preserved; got %q", tt.existingCorrelationID, responseCorrelationID)
+				if actualCorrelationID != tt.existingCorrelationID {
+					t.Errorf("expected correlation-id %q to be preserved; got %q", tt.existingCorrelationID, actualCorrelationID)
 				}
 			}
 
 			if tt.wantGenerated {
 				// Verify a correlation-id was generated
-				if responseCorrelationID == "" {
+				if actualCorrelationID == "" {
 					t.Error("expected correlation-id to be generated and added to response header")
 				}
 				// Verify it's a valid UUID format (basic check)
-				if len(responseCorrelationID) != 36 {
-					t.Errorf("expected correlation-id to be UUID format (36 chars); got %d chars", len(responseCorrelationID))
+				if len(actualCorrelationID) != 36 {
+					t.Errorf("expected correlation-id to be UUID format (36 chars); got %d chars", len(actualCorrelationID))
 				}
+			}
+
+			if actualBuild != expectedVersion.Build {
+				t.Errorf("expected build %q to be added to response header; got %q", expectedVersion.Build, actualBuild)
+			}
+
+			if actualBranch != expectedVersion.Branch {
+				t.Errorf("expected branch %q to be added to response header; got %q", expectedVersion.Branch, actualBranch)
 			}
 		})
 	}
 }
 
-func TestCorrelationIDMiddleware_LoggerInContext(t *testing.T) {
+func TestHeaderMiddleware_LoggerInContext(t *testing.T) {
 	// Test that the middleware adds a logger to the context
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Verify logger is in context
@@ -85,14 +101,18 @@ func TestCorrelationIDMiddleware_LoggerInContext(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	handler := correlationIDMiddleware(testHandler)
+	expectedVersion := version.Version{
+		Build:  "test-build",
+		Branch: "test-branch",
+	}
+	handler := headerMiddleware(testHandler, expectedVersion)
 	req := httptest.NewRequest(http.MethodGet, "/test", nil)
 	w := httptest.NewRecorder()
 
 	handler.ServeHTTP(w, req)
 }
 
-func TestServer_CorrelationIDMiddleware_Integration(t *testing.T) {
+func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 	tests := []struct {
 		name                  string
 		path                  string
@@ -127,7 +147,11 @@ func TestServer_CorrelationIDMiddleware_Integration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := NewServer()
+			expectedVersion := version.Version{
+				Build:  "test-build",
+				Branch: "test-branch",
+			}
+			server := NewServer(expectedVersion)
 			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			if tt.existingCorrelationID != "" {
 				req.Header.Set(CorrelationIDHeader, tt.existingCorrelationID)
@@ -136,16 +160,26 @@ func TestServer_CorrelationIDMiddleware_Integration(t *testing.T) {
 
 			server.ServeHTTP(w, req)
 
-			correlationID := w.Header().Get(CorrelationIDHeader)
+			actualCorrelationID := w.Header().Get(CorrelationIDHeader)
+			actualBuild := w.Header().Get(BuildHeader)
+			actualBranch := w.Header().Get(BranchHeader)
 
 			if tt.wantPreserved {
-				if correlationID != tt.existingCorrelationID {
-					t.Errorf("expected correlation-id %q to be preserved; got %q", tt.existingCorrelationID, correlationID)
+				if actualCorrelationID != tt.existingCorrelationID {
+					t.Errorf("expected correlation-id %q to be preserved; got %q", tt.existingCorrelationID, actualCorrelationID)
 				}
 			} else {
-				if correlationID == "" {
+				if actualCorrelationID == "" {
 					t.Error("expected correlation-id to be generated and added to response header")
 				}
+			}
+
+			if actualBuild != expectedVersion.Build {
+				t.Errorf("expected build %q to be added to response header; got %q", expectedVersion.Build, actualBuild)
+			}
+
+			if actualBranch != expectedVersion.Branch {
+				t.Errorf("expected branch %q to be added to response header; got %q", expectedVersion.Branch, actualBranch)
 			}
 		})
 	}

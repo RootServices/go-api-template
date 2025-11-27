@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"go-api-template/internal/logger"
+	"go-api-template/internal/version"
 )
 
 type HelloWorldResponse struct {
@@ -35,13 +36,24 @@ func handleHelloWorld() http.Handler {
 	})
 }
 
+type HealthzResponse struct {
+	Status string `json:"status"`
+	Build  string `json:"build"`
+	Branch string `json:"branch"`
+}
+
 // handleHealthz returns a handler that responds with "ok".
-func handleHealthz() http.Handler {
+func handleHealthz(version version.Version) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.FromContext(r.Context())
 		log.Debug("handling healthz request")
 
-		if err := encode(w, r, http.StatusOK, map[string]string{"status": "ok"}); err != nil {
+		response := HealthzResponse{
+			Status: "ok",
+			Build:  version.Build,
+			Branch: version.Branch,
+		}
+		if err := encode(w, r, http.StatusOK, response); err != nil {
 			log.Error("failed to encode healthz response",
 				slog.String("error", err.Error()),
 			)

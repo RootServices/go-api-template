@@ -5,10 +5,16 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"go-api-template/internal/version"
 )
 
 func TestHandleHelloWorld(t *testing.T) {
-	server := NewServer()
+	version := version.Version{
+		Build:  "test-build",
+		Branch: "test-branch",
+	}
+	server := NewServer(version)
 	req := httptest.NewRequest(http.MethodGet, "/api/hello", nil)
 	w := httptest.NewRecorder()
 
@@ -29,7 +35,11 @@ func TestHandleHelloWorld(t *testing.T) {
 }
 
 func TestHandleHealthz(t *testing.T) {
-	server := NewServer()
+	version := version.Version{
+		Build:  "test-build",
+		Branch: "test-branch",
+	}
+	server := NewServer(version)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	w := httptest.NewRecorder()
 
@@ -46,6 +56,14 @@ func TestHandleHealthz(t *testing.T) {
 
 	if resp["status"] != "ok" {
 		t.Errorf("expected status 'ok'; got %q", resp["status"])
+	}
+
+	if resp["build"] != version.Build {
+		t.Errorf("expected build %q; got %q", version.Build, resp["build"])
+	}
+
+	if resp["branch"] != version.Branch {
+		t.Errorf("expected branch %q; got %q", version.Branch, resp["branch"])
 	}
 
 }
