@@ -27,6 +27,9 @@ This template follows best practices from the [Grafana Labs blog post on buildin
 │   ├── logger/
 │   │   ├── logger.go        # Structured logging utilities
 │   │   └── logger_test.go   # Logger tests
+|   |-- version/
+│   │   ├── version.go       # Version read from version.json
+│   │   └── version_test.go  # Version tests
 │   ├── encoding.go          # JSON encoding utilities
 │   ├── handlers.go          # HTTP request handlers
 │   ├── handlers_test.go     # Handler tests
@@ -66,12 +69,6 @@ Run the application using the Makefile:
 
 ```bash
 make run
-```
-
-Or directly with Go:
-
-```bash
-go run ./cmd/main.go
 ```
 
 The server will start on `http://localhost:8080` (or the port specified in the `PORT` environment variable).
@@ -123,7 +120,9 @@ The application uses structured logging with `log/slog`. Each request is automat
   "msg": "handling hello world request",
   "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
   "method": "GET",
-  "path": "/api/hello"
+  "path": "/api/hello",
+  "build": "abc123",
+  "branch": "main" 
 }
 ```
 
@@ -139,16 +138,16 @@ The Secret Manager client uses [Application Default Credentials (ADC)](https://c
 ### Building the Image
 
 ```bash
-docker build -t go-api-template .
+make build-docker
 ```
 
 ### Running the Container
 
 ```bash
-docker run -p 8080:8080 go-api-template
+make run-docker
 ```
 
-With environment variables:
+Or With environment variables:
 
 ```bash
 docker run -p 8080:8080 \
@@ -162,7 +161,7 @@ docker run -p 8080:8080 \
 
 The Dockerfile uses a multi-stage build:
 1. **Builder stage**: Compiles the Go application
-2. **Final stage**: Uses distroless image for minimal attack surface and smaller image size
+2. **Final stage**: Uses [chainguard/glibc-dynamic:latest](https://images.chainguard.dev/directory/image/glibc-dynamic/versions)
 
 ## Contributing
 

@@ -1,0 +1,21 @@
+mode: set
+go-api-template/internal/encoding.go:10.83,13.53 3 1
+go-api-template/internal/encoding.go:13.53,15.3 1 1
+go-api-template/internal/encoding.go:16.2,16.12 1 1
+go-api-template/internal/encoding.go:20.48,22.59 2 1
+go-api-template/internal/encoding.go:22.59,24.3 1 1
+go-api-template/internal/encoding.go:25.2,25.15 1 1
+go-api-template/internal/handlers.go:16.38,17.71 1 1
+go-api-template/internal/handlers.go:17.71,28.59 4 1
+go-api-template/internal/handlers.go:28.59,33.4 2 0
+go-api-template/internal/handlers.go:35.3,35.57 1 1
+go-api-template/internal/handlers.go:46.58,47.71 1 1
+go-api-template/internal/handlers.go:47.71,56.63 4 1
+go-api-template/internal/handlers.go:56.63,61.4 2 0
+go-api-template/internal/handlers.go:63.3,63.41 1 1
+go-api-template/internal/middleware.go:20.80,21.71 1 1
+go-api-template/internal/middleware.go:21.71,23.26 2 1
+go-api-template/internal/middleware.go:23.26,26.4 2 1
+go-api-template/internal/middleware.go:29.3,40.23 7 1
+go-api-template/internal/server.go:11.54,18.2 5 1
+go-api-template/internal/server.go:20.61,24.2 3 1
