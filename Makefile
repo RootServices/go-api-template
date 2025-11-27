@@ -1,4 +1,4 @@
-.PHONY: run test build version
+.PHONY: clean run test build version
 BUILD=`git rev-parse --short HEAD`
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 
@@ -18,3 +18,9 @@ test: version
 
 build: version
 	go build  -o bin/server ./cmd/main.go
+
+clean:
+	@echo "Cleaning up the build directory"
+	rm -rf bin
+	rm -rf internal/version/version.json
+	rm -rf coverage.out
