@@ -29,7 +29,7 @@ func headerMiddleware(next http.Handler, version version.Version) http.Handler {
 		w.Header().Set(CorrelationIDHeader, correlationID)
 
 		// Create a logger with the correlation ID and add it to the context
-		reqLogger := logger.WithCorrelationID(correlationID)
+		reqLogger := logger.WithCorrelationID(r.Context(), correlationID)
 		ctx := logger.ToContext(r.Context(), reqLogger)
 		r = r.WithContext(ctx)
 
@@ -37,16 +37,42 @@ func headerMiddleware(next http.Handler, version version.Version) http.Handler {
 		w.Header().Set(BuildHeader, version.Build)
 		w.Header().Set(BranchHeader, version.Branch)
 
+		reqLogger.Info("headerMiddleware completed")
 		next.ServeHTTP(w, r)
 	})
 }
 
 func structuredLoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		reqLogger := logger.WithRequestInfo(r)
+		reqLogger := logger.WithRequestInfo(r.Context(), r)
 		ctx := logger.ToContext(r.Context(), reqLogger)
 		r = r.WithContext(ctx)
 
+		reqLogger.Info("structuredLoggingMiddleware completed")
 		next.ServeHTTP(w, r)
+	})
+}
+
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func NewLoggingResponseWriter(w http.ResponseWriter) *loggingResponseWriter {
+	return &loggingResponseWriter{w, http.StatusOK}
+}
+
+func (lrw *loggingResponseWriter) WriteHeader(code int) {
+	lrw.statusCode = code
+	lrw.ResponseWriter.WriteHeader(code)
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lrw := NewLoggingResponseWriter(w)
+		next.ServeHTTP(lrw, r)
+
+		reqLogger := logger.WithResponseInfo(r.Context(), lrw.statusCode)
+		reqLogger.Info("request completed")
 	})
 }

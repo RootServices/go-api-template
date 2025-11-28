@@ -36,7 +36,7 @@ func TestWithCorrelationID(t *testing.T) {
 	})
 	slog.SetDefault(slog.New(handler))
 
-	logger := WithCorrelationID(correlationID)
+	logger := WithCorrelationID(context.Background(), correlationID)
 	logger.Info("test message")
 
 	output := buf.String()
@@ -88,7 +88,7 @@ func TestFromContext_WithCorrelationID(t *testing.T) {
 	slog.SetDefault(slog.New(handler))
 
 	correlationID := "test-correlation-id-456"
-	logger := WithCorrelationID(correlationID)
+	logger := WithCorrelationID(context.Background(), correlationID)
 
 	ctx := context.Background()
 	ctx = ToContext(ctx, logger)

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strconv"
 
 	"go-api-template/internal/version"
 )
@@ -34,12 +35,19 @@ func Init(version version.Version) {
 }
 
 // WithCorrelationID creates a new logger with the correlation ID attached.
-func WithCorrelationID(correlationID string) *slog.Logger {
-	return slog.Default().With(slog.String(correlationIDKey, correlationID))
+func WithCorrelationID(ctx context.Context, correlationID string) *slog.Logger {
+	logger := FromContext(ctx)
+	return logger.With(slog.String(correlationIDKey, correlationID))
 }
 
-func WithRequestInfo(r *http.Request) *slog.Logger {
-	return slog.Default().With(slog.String(pathKey, r.URL.Path), slog.String(methodKey, r.Method))
+func WithRequestInfo(ctx context.Context, r *http.Request) *slog.Logger {
+	logger := FromContext(ctx)
+	return logger.With(slog.String(pathKey, r.URL.Path), slog.String(methodKey, r.Method))
+}
+
+func WithResponseInfo(ctx context.Context, statusCode int) *slog.Logger {
+	logger := FromContext(ctx)
+	return logger.With(slog.String(statusCodeKey, strconv.Itoa(statusCode)))
 }
 
 // ToContext adds a logger to the context.

@@ -17,11 +17,13 @@ func NewServer(version version.Version) http.Handler {
 
 	var handlerWithRoutes http.Handler = mux
 
-	handlerWithCompression := handlers.CompressHandler(handlerWithRoutes)
-	handlerWithHeaders := headerMiddleware(handlerWithCompression, version)
-	handlerWithLogging := structuredLoggingMiddleware(handlerWithHeaders)
+	// handlerWithLoggingBeta := loggingMiddleware(handlerWithRoutes)
+
+	handlerWithLogging := structuredLoggingMiddleware(handlerWithRoutes)
+	handlerWithHeaders := headerMiddleware(handlerWithLogging, version)
+	handlerWithCompression := handlers.CompressHandler(handlerWithHeaders)
 	// Apply middleware
-	return handlerWithLogging
+	return handlerWithCompression
 }
 
 func addRoutes(mux *http.ServeMux, version version.Version) {
