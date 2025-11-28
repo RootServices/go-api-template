@@ -21,17 +21,27 @@ const (
 	pathKey          string     = "path"
 	methodKey        string     = "method"
 	statusCodeKey    string     = "status_code"
+	portKey          string     = "port"
 )
 
 // Init initializes the global logger with JSON output.
 // This should be called once at application startup.
 func Init(version version.Version) {
+	attrs := []slog.Attr{
+		slog.String(buildKey, version.Build),
+		slog.String(branchKey, version.Branch),
+	}
 	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
-	})
-	slog.SetDefault(slog.New(handler).
-		With(slog.String(buildKey, version.Build)).
-		With(slog.String(branchKey, version.Branch)))
+	}).WithAttrs(attrs)
+
+	slog.SetDefault(slog.New(handler))
+}
+
+func WithServerInfo(port string) *slog.Logger {
+	logger := slog.Default().With(slog.String(portKey, port))
+	slog.SetDefault(logger)
+	return logger
 }
 
 // WithCorrelationID creates a new logger with the correlation ID attached.
