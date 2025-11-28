@@ -1,4 +1,4 @@
-package internal
+package middleware
 
 import (
 	"net/http"
@@ -13,11 +13,13 @@ const CorrelationIDHeader = "X-Correlation-Id"
 const BuildHeader = "X-Build"
 const BranchHeader = "X-Branch"
 
+// middleware for pre processing (before the handler is called)
+
 // headerMiddleware ensures that every request has a correlation-id header.
 // If the header is not present in the incoming request, it generates a new UUID
 // and adds it to both the request and response headers.
 // It also creates a logger with the correlation ID and adds it to the request context.
-func headerMiddleware(next http.Handler, version version.Version) http.Handler {
+func HeaderMiddleware(next http.Handler, version version.Version) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		correlationID := r.Header.Get(CorrelationIDHeader)
 		if correlationID == "" {
@@ -42,7 +44,7 @@ func headerMiddleware(next http.Handler, version version.Version) http.Handler {
 	})
 }
 
-func structuredLoggingMiddleware(next http.Handler) http.Handler {
+func StructuredLoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqLogger := logger.WithRequestInfo(r.Context(), r)
 		ctx := logger.ToContext(r.Context(), reqLogger)
@@ -52,6 +54,8 @@ func structuredLoggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// middleware for post processing (after the handler has completed)
 
 type loggingResponseWriter struct {
 	http.ResponseWriter
@@ -67,12 +71,12 @@ func (lrw *loggingResponseWriter) WriteHeader(code int) {
 	lrw.ResponseWriter.WriteHeader(code)
 }
 
-func loggingMiddleware(next http.Handler) http.Handler {
+func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lrw := NewLoggingResponseWriter(w)
 		next.ServeHTTP(lrw, r)
 
 		reqLogger := logger.WithResponseInfo(r.Context(), lrw.statusCode)
-		reqLogger.Info("request completed")
+		reqLogger.Info("loggingMiddleware completed")
 	})
 }

@@ -12,8 +12,8 @@ type HelloWorldResponse struct {
 	Message string `json:"message"`
 }
 
-// handleHelloWorld returns a handler that responds with "Hello, World!".
-func handleHelloWorld() http.Handler {
+// HandleHelloWorld returns a handler that responds with "Hello, World!".
+func HandleHelloWorld() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.FromContext(r.Context())
 		log.Info("handling hello world request")
@@ -39,8 +39,8 @@ type HealthzResponse struct {
 	Branch string `json:"branch"`
 }
 
-// handleHealthz returns a handler that responds with "ok".
-func handleHealthz(version version.Version) http.Handler {
+// HandleHealthz returns a handler that responds with "ok".
+func HandleHealthz(version version.Version) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.FromContext(r.Context())
 		log.Debug("handling healthz request")
