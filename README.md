@@ -28,6 +28,7 @@ This template follows best practices from the [Grafana Labs blog post on buildin
 │   │   ├── logger.go        # Logging utilities
 │   │   └── logger_test.go   # Logger tests
 │   ├── middleware/
+│   │   ├── after.go         # post processing middleware
 │   │   ├── before.go        # pre processing middleware
 │   │   └── before_test.go   # pre processing middleware tests
 |   |-- version/
