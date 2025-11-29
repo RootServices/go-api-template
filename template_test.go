@@ -78,7 +78,9 @@ func TestTemplateGenerationAndTest(t *testing.T) {
 	cmd.Dir = projectDir
 	// Configure git user if needed for CI environments, but locally it should be fine.
 	// We'll ignore errors here as it might fail if user not configured, but usually works locally.
-	_ = cmd.Run()
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("failed to add a git commit: %v", err)
+	}
 
 	// Run go mod tidy (since the post-gen hook was deleted)
 	cmd = exec.Command("go", "mod", "tidy")
