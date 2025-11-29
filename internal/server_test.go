@@ -2,7 +2,7 @@ package internal
 
 import (
 	"context"
-	"net"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -85,7 +85,7 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 }
 
 func TestServer_StartServer(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	version := version.Version{
 		Build:  "test-build",
@@ -98,7 +98,19 @@ func TestServer_StartServer(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	server, err := StartServer(ctx, version, portGeneratorFn)
+
+	noopBlockFn := func(ctx context.Context, server *http.Server, log *slog.Logger) {
+		log.Info("Noop block function")
+	}
+
+	params := StartServerParams{
+		ParentCtx:       ctx,
+		Version:         version,
+		PortGeneratorFn: portGeneratorFn,
+		BlockFn:         noopBlockFn,
+	}
+
+	server, err := StartServer(params)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -106,13 +118,19 @@ func TestServer_StartServer(t *testing.T) {
 	defer func() {
 		if err := server.Shutdown(ctx); err != nil {
 			t.Fatalf("expected no error, got %v", err)
+		} else {
+			t.Log("server shutdown")
 		}
 	}()
 
 	// Test that the server is listening on the correct port
-	conn, err := net.Dial("tcp", port)
+	healthzURL := "http://localhost:" + port + "/healthz"
+	resp, err := http.Get(healthzURL)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	conn.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected status code %v, got %v", http.StatusOK, resp.StatusCode)
+	}
+	resp.Body.Close()
 }

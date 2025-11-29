@@ -52,14 +52,45 @@ func Port() string {
 	return port
 }
 
-func StartServer(ctx context.Context, version version.Version, portGeneratorFn PortGenerator) (*http.Server, error) {
-	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+type BlockUntilServerShutdown func(ctx context.Context, httpServer *http.Server, log *slog.Logger)
+
+func Block(ctx context.Context, httpServer *http.Server, log *slog.Logger) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		<-ctx.Done()
+		log.Info("shutting down server gracefully")
+		shutdownCtx := context.Background()
+		shutdownCtx, cancel := context.WithTimeout(shutdownCtx, 10*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(shutdownCtx); err != nil {
+			log.Error("error during shutdown",
+				slog.String("error", err.Error()),
+			)
+			fmt.Fprintf(os.Stderr, "error shutting down http server: %s\n", err)
+		} else {
+			log.Info("server shutdown complete")
+		}
+	}()
+	wg.Wait()
+}
+
+type StartServerParams struct {
+	ParentCtx       context.Context
+	Version         version.Version
+	PortGeneratorFn PortGenerator
+	BlockFn         BlockUntilServerShutdown
+}
+
+func StartServer(params StartServerParams) (*http.Server, error) {
+	copyCtx, cancel := signal.NotifyContext(params.ParentCtx, os.Interrupt)
 	defer cancel()
 
-	srv := NewServer(version)
+	srv := NewServer(params.Version)
 
 	// Use a configurable port or default to 8080
-	port := portGeneratorFn()
+	port := params.PortGeneratorFn()
 
 	httpServer := &http.Server{
 		Addr:    net.JoinHostPort("", port),
@@ -83,25 +114,7 @@ func StartServer(ctx context.Context, version version.Version, portGeneratorFn P
 		}
 	}()
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		<-ctx.Done()
-		log.Info("shutting down server gracefully")
-		shutdownCtx := context.Background()
-		shutdownCtx, cancel := context.WithTimeout(shutdownCtx, 10*time.Second)
-		defer cancel()
-		if err := httpServer.Shutdown(shutdownCtx); err != nil {
-			log.Error("error during shutdown",
-				slog.String("error", err.Error()),
-			)
-			fmt.Fprintf(os.Stderr, "error shutting down http server: %s\n", err)
-		} else {
-			log.Info("server shutdown complete")
-		}
-	}()
-	wg.Wait()
+	params.BlockFn(copyCtx, httpServer, log)
 
 	return httpServer, nil
 }
