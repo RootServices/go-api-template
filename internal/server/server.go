@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"context"
@@ -11,8 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorilla/handlers"
+	externalHandlers "github.com/gorilla/handlers"
 
+	"go-api-template/internal/handler"
 	"go-api-template/internal/logger"
 	"go-api-template/internal/middleware"
 	"go-api-template/internal/version"
@@ -31,14 +32,14 @@ func NewServer(version version.Version) http.Handler {
 
 	handlerWithLogging := middleware.StructuredLoggingMiddleware(handlerWithRoutes)
 	handlerWithHeaders := middleware.HeaderMiddleware(handlerWithLogging, version)
-	handlerWithCompression := handlers.CompressHandler(handlerWithHeaders)
+	handlerWithCompression := externalHandlers.CompressHandler(handlerWithHeaders)
 	// Apply middleware
 	return handlerWithCompression
 }
 
 func addRoutes(mux *http.ServeMux, version version.Version) {
-	mux.Handle("GET /api/hello", HandleHelloWorld())
-	mux.Handle("GET /healthz", HandleHealthz(version))
+	mux.Handle("GET /api/hello", handler.HandleHelloWorld())
+	mux.Handle("GET /healthz", handler.HandleHealthz(version))
 	mux.Handle("/", http.NotFoundHandler())
 }
 

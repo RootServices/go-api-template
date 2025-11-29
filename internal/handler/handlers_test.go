@@ -1,4 +1,4 @@
-package internal
+package handler
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"go-api-template/internal/server"
 	"go-api-template/internal/version"
 )
 
@@ -14,7 +15,7 @@ func TestHandleHelloWorld(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := NewServer(version)
+	server := server.NewServer(version)
 	req := httptest.NewRequest(http.MethodGet, "/api/hello", nil)
 	w := httptest.NewRecorder()
 
@@ -39,7 +40,7 @@ func TestHandleHealthz(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := NewServer(version)
+	server := server.NewServer(version)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	w := httptest.NewRecorder()
 

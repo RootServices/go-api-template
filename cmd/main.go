@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	"go-api-template/internal"
 	"go-api-template/internal/logger"
+	"go-api-template/internal/server"
 	"go-api-template/internal/version"
 )
 
@@ -22,13 +22,13 @@ func main() {
 	logger.Init(version)
 	log := slog.Default()
 
-	params := internal.StartServerParams{
+	params := server.StartServerParams{
 		ParentCtx:       ctx,
 		Version:         version,
-		PortGeneratorFn: internal.Port,
-		BlockFn:         internal.Block,
+		PortGeneratorFn: server.Port,
+		BlockFn:         server.Block,
 	}
-	_, err = internal.StartServer(params)
+	_, err = server.StartServer(params)
 
 	if err != nil {
 		log.Error("application error", slog.String("error", err.Error()))
