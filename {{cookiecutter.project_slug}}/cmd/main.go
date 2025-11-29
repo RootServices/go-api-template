@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"os"
 
-	"go-api-template/internal/logger"
-	"go-api-template/internal/server"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/logger"
+	"{{cookiecutter.module_name}}/internal/server"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 func main() {

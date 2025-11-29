@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"go-api-template/internal/handler"
-	"go-api-template/internal/server"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/handler"
+	"{{cookiecutter.module_name}}/internal/server"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 func TestHandleHelloWorld(t *testing.T) {

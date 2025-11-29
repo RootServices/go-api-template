@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"go-api-template/internal/logger"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/logger"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 type HelloWorldResponse struct {

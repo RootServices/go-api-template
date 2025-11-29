@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 func TestInit(t *testing.T) {

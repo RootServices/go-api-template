@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"go-api-template/internal/logger"
+	"{{cookiecutter.module_name}}/internal/logger"
 )
 
 // middleware for post processing (after the handler has completed)

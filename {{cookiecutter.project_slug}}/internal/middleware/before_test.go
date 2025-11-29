@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"go-api-template/internal/logger"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/logger"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 // tests to make sure headers are added to response

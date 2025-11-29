@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 // contextKey is a private type for context keys to avoid collisions.

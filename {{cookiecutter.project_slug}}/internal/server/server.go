@@ -13,10 +13,10 @@ import (
 
 	externalHandlers "github.com/gorilla/handlers"
 
-	"go-api-template/internal/handler"
-	"go-api-template/internal/logger"
-	"go-api-template/internal/middleware"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/handler"
+	"{{cookiecutter.module_name}}/internal/logger"
+	"{{cookiecutter.module_name}}/internal/middleware"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 // NewServer creates a new http.Handler with routes configured.

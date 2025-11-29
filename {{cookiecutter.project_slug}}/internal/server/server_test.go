@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"go-api-template/internal/middleware"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/middleware"
+	"{{cookiecutter.module_name}}/internal/version"
 )
 
 func TestServer_HeaderMiddleware_Integration(t *testing.T) {

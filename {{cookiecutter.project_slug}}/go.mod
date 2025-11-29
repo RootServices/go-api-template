@@ -1,6 +1,6 @@
-module go-api-template
+module {{cookiecutter.module_name}}
 
-go 1.24.0
+go {{cookiecutter.go_version}}
 
 require (
 	cloud.google.com/go/auth v0.16.4 // indirect

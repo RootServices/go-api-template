@@ -1,174 +1,117 @@
-# Go API Template
+# Go API Cookiecutter Template
 
-A Go REST API template built with best practices and modern standards. 
+A [cookiecutter](https://github.com/cookiecutter/cookiecutter) template for creating production-ready Go REST APIs following modern best practices.
 
-## Best Practices
+## Features
 
-This template follows best practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
+This template generates a Go REST API project with:
 
-- Dependency injection through function parameters
-- Handler functions return `http.Handler` instead of using `http.HandlerFunc` directly
-- Centralized JSON encoding with error handling
-- Structured logging with context propagation
-- Graceful shutdown with signal handling
-- Repository pattern for external dependencies
-- Interface-based design for testability
-
-## Project Structure
-
-```
-.
-├── cmd/
-│   └── main.go              # Application entry point
-├── internal/
-│   ├── gcp/
-│   │   ├── secrets.go       # GCP Secret Manager
-│   │   └── secrets_test.go  # GCP Secret Manager tests
-│   ├── handler/
-│   │   ├── encoding_test.go # JSON encoding utilities tests
-│   │   └── encoding.go      # JSON encoding utilities
-│   │   ├── handlers_test.go # Handler tests
-│   │   └── handlers.go      # HTTP request handlers
-│   ├── logger/
-│   │   ├── logger.go        # Logging utilities
-│   │   └── logger_test.go   # Logger tests
-│   ├── server/
-│   │   ├── server.go        # HTTP server setup
-│   │   └── server_test.go   # HTTP server setup tests
-│   ├── middleware/
-│   │   ├── after.go         # post processing middleware
-│   │   ├── before.go        # pre processing middleware
-│   │   └── before_test.go   # pre processing middleware tests
-|   |-- version/
-│   │   ├── version.go       # Version read from version.json
-│   │   └── version_test.go  # Version tests
-├── Dockerfile               # Multi-stage Docker build
-├── Makefile                 # Build and test commands
-├── go.mod                   # Go module dependencies
-└── README.md                # This file
-```
+- **Best Practices**: Based on [Grafana Labs' approach](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/) to building HTTP services
+- **Structured Logging**: Built-in correlation ID tracking and context propagation using `log/slog`
+- **Middleware**: Pre and post-processing middleware for logging, headers, and compression
+- **Testing**: Comprehensive test coverage with table-driven tests
+- **GCP Integration**: Secret Manager client with repository pattern
+- **Docker Support**: Multi-stage Dockerfile with minimal base image
+- **Makefile**: Common tasks for building, testing, and running
+- **Graceful Shutdown**: Proper signal handling and server shutdown
 
 ## Prerequisites
 
+- Python 3.7+ (for cookiecutter)
 - Go 1.24.0 or later
-- Docker (optional, for containerization)
-- GCP credentials (optional, for Secret Manager integration)
+- Docker
 
-## Getting Started
+## Quick Start
 
-### Installation
-
-1. Clone this repository:
-```bash
-git clone <repository-url>
-cd go-api-template
-```
-
-2. Install dependencies:
-```bash
-go mod download
-```
-
-### Running Locally
-
-Run the application using the Makefile:
+### 1. Install Cookiecutter
 
 ```bash
-make run
+pip install cookiecutter
 ```
 
-The server will start on `http://localhost:8080` (or the port specified in the `PORT` environment variable).
-
-### Running Tests
-
-Run all tests with coverage:
+Or using pipx (recommended):
 
 ```bash
-make test
+pipx install cookiecutter
 ```
 
-This will:
-- Execute all tests in the project
-- Generate a coverage report (`coverage.out`)
-- Display coverage statistics
-
-### Building
-
-Build the application binary:
+### 2. Generate Your Project
 
 ```bash
-make build
+cookiecutter https://github.com/yourusername/go-api-cookiecutter
 ```
 
-The compiled binary will be available at `bin/server`.
-
-## Configuration
-
-### Environment Variables
-
-- `PORT` - Server port (default: `8080`)
-- `GOOGLE_APPLICATION_CREDENTIALS` - Path to GCP service account key (for Secret Manager)
-
-### Logging
-
-The application uses structured logging with `log/slog`. Each request is automatically assigned a correlation ID for distributed tracing.
-
-**Log Levels:**
-- `INFO` - General application events
-- `DEBUG` - Detailed debugging information
-- `ERROR` - Error conditions
-
-**Example log output:**
-```json
-{
-  "time": "2025-11-27T07:44:08-05:00",
-  "level": "INFO",
-  "msg": "handling hello world request",
-  "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
-  "method": "GET",
-  "path": "/api/hello",
-  "build": "abc123",
-  "branch": "main" 
-}
-```
-
-### Authentication
-
-The Secret Manager client uses [Application Default Credentials (ADC)](https://cloud.google.com/docs/authentication/application-default-credentials):
-
-1. **Local Development**: Set `GOOGLE_APPLICATION_CREDENTIALS` to your service account key path
-2. **GCP Environments**: Automatically uses the attached service account
-
-## Docker
-
-### Building the Image
+Or if using a local copy:
 
 ```bash
-make build-docker
+cookiecutter /path/to/go-api-template
 ```
 
-### Running the Container
+### 3. Answer the Prompts
+
+You'll be asked to provide values for:
+
+- **project_name**: Human-readable project name (e.g., "My API Project")
+- **project_slug**: URL/filesystem-safe name (auto-generated from project_name)
+- **module_name**: Go module name (e.g., "github.com/username/my-api-project")
+- **project_description**: Short description of your project
+- **author_name**: Your name
+- **github_username**: Your GitHub username
+- **go_version**: Go version to use (default: "1.24.0")
+- **docker_image_name**: Docker image name (auto-generated from project_slug)
+- **port**: Default server port (default: "8080")
+
+## Template Variables
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `project_name` | Human-readable project name | "Go API Project" | "My Awesome API" |
+| `project_slug` | URL-safe project name | Auto-generated | "my-awesome-api" |
+| `module_name` | Go module import path | github.com/... | "github.com/user/my-api" |
+| `project_description` | Short project description | "A Go REST API..." | "API for managing tasks" |
+| `author_name` | Project author | "Your Name" | "John Doe" |
+| `github_username` | GitHub username | "yourusername" | "johndoe" |
+| `go_version` | Go version | "1.24.0" | "1.23.0" |
+| `docker_image_name` | Docker image name | Auto-generated | "my-awesome-api" |
+| `port` | Default server port | "8080" | "3000" |
+
+
+## Example Usage
+
+### Non-Interactive Mode
 
 ```bash
-make run-docker
+cookiecutter https://github.com/yourusername/go-api-cookiecutter \
+  --no-input \
+  project_name="Task Manager API" \
+  github_username="johndoe" \
+  module_name="github.com/johndoe/task-manager-api"
 ```
 
-Or With environment variables:
+### Using a Config File
+
+Create a `config.yaml`:
+
+```yaml
+default_context:
+  project_name: "Task Manager API"
+  author_name: "John Doe"
+  github_username: "johndoe"
+  go_version: "1.23.0"
+  port: "3000"
+```
+
+Then run:
 
 ```bash
-docker run -p 8080:8080 \
-  -e PORT=8080 \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/key.json \
-  -v /path/to/key.json:/secrets/key.json \
-  go-api-template
+cookiecutter https://github.com/yourusername/go-api-cookiecutter --config-file config.yaml
 ```
-
-### Multi-Stage Build
-
-The Dockerfile uses a multi-stage build:
-1. **Builder stage**: Compiles the Go application
-2. **Final stage**: Uses [chainguard/glibc-dynamic:latest](https://images.chainguard.dev/directory/image/glibc-dynamic/versions)
 
 ## Contributing
 
-This is a template repository. Fork it and customize it for your own projects!
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Credits
+
+This template follows best practices from:
+- [How I write HTTP services in Go after 13 years](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/) by Mat Ryer

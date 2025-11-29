@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"go-api-template/internal/logger"
-	"go-api-template/internal/version"
+	"{{cookiecutter.module_name}}/internal/logger"
+	"{{cookiecutter.module_name}}/internal/version"
 
 	"github.com/google/uuid"
 )

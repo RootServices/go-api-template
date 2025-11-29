@@ -13,7 +13,7 @@ run: version
 	go run ./cmd/main.go
 
 run-docker:
-	docker run -p 8080:8080 go-api-template
+	docker run -p {{cookiecutter.port}}:{{cookiecutter.port}} {{cookiecutter.docker_image_name}}
 
 test: version
 	go test -coverprofile=coverage.out ./...
@@ -23,7 +23,7 @@ build: version
 	CGO_ENABLED=1 go build -o bin/server ./cmd/main.go
 
 build-docker:
-	docker build -t go-api-template .
+	docker build -t {{cookiecutter.docker_image_name}} .
 
 clean:
 	@echo "Cleaning up the build directory"
