@@ -24,9 +24,17 @@ This template follows best practices from the [Grafana Labs blog post on buildin
 │   ├── gcp/
 │   │   ├── secrets.go       # GCP Secret Manager
 │   │   └── secrets_test.go  # GCP Secret Manager tests
+│   ├── handler/
+│   │   ├── encoding_test.go # JSON encoding utilities tests
+│   │   └── encoding.go      # JSON encoding utilities
+│   │   ├── handlers_test.go # Handler tests
+│   │   └── handlers.go      # HTTP request handlers
 │   ├── logger/
 │   │   ├── logger.go        # Logging utilities
 │   │   └── logger_test.go   # Logger tests
+│   ├── server/
+│   │   ├── server.go        # HTTP server setup
+│   │   └── server_test.go   # HTTP server setup tests
 │   ├── middleware/
 │   │   ├── after.go         # post processing middleware
 │   │   ├── before.go        # pre processing middleware
@@ -34,13 +42,6 @@ This template follows best practices from the [Grafana Labs blog post on buildin
 |   |-- version/
 │   │   ├── version.go       # Version read from version.json
 │   │   └── version_test.go  # Version tests
-│   ├── encoding.go          # JSON encoding utilities
-│   ├── handlers.go          # HTTP request handlers
-│   ├── handlers_test.go     # Handler tests
-│   ├── middleware.go        # HTTP middleware
-│   ├── middleware_test.go   # Middleware tests
-│   └── server.go            # HTTP server setup
-│   └── server_test.go       # HTTP server int tests
 ├── Dockerfile               # Multi-stage Docker build
 ├── Makefile                 # Build and test commands
 ├── go.mod                   # Go module dependencies

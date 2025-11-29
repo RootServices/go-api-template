@@ -1,4 +1,4 @@
-package handler
+package handler_test
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"go-api-template/internal/handler"
 	"go-api-template/internal/server"
 	"go-api-template/internal/version"
 )
@@ -25,7 +26,7 @@ func TestHandleHelloWorld(t *testing.T) {
 		t.Errorf("expected status OK; got %v", w.Code)
 	}
 
-	var resp HelloWorldResponse
+	var resp handler.HelloWorldResponse
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
