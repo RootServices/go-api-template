@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -80,4 +82,37 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestServer_StartServer(t *testing.T) {
+	// t.Parallel()
+
+	version := version.Version{
+		Build:  "test-build",
+		Branch: "test-branch",
+	}
+
+	port := "1234"
+	portGeneratorFn := func() string {
+		return port
+	}
+
+	ctx := context.Background()
+	server, err := StartServer(ctx, version, portGeneratorFn)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	defer func() {
+		if err := server.Shutdown(ctx); err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+	}()
+
+	// Test that the server is listening on the correct port
+	conn, err := net.Dial("tcp", port)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	conn.Close()
 }

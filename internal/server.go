@@ -42,17 +42,24 @@ func addRoutes(mux *http.ServeMux, version version.Version) {
 	mux.Handle("/", http.NotFoundHandler())
 }
 
-func StartServer(ctx context.Context, version version.Version) (*http.Server, error) {
+type PortGenerator func() string
+
+func Port() string {
+	port := "8080"
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		port = envPort
+	}
+	return port
+}
+
+func StartServer(ctx context.Context, version version.Version, portGeneratorFn PortGenerator) (*http.Server, error) {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
 	srv := NewServer(version)
 
 	// Use a configurable port or default to 8080
-	port := "8080"
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
-	}
+	port := portGeneratorFn()
 
 	httpServer := &http.Server{
 		Addr:    net.JoinHostPort("", port),

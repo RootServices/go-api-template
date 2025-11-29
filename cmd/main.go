@@ -22,7 +22,7 @@ func main() {
 	logger.Init(version)
 	log := slog.Default()
 
-	_, err = internal.StartServer(ctx, version)
+	_, err = internal.StartServer(ctx, version, internal.Port)
 	if err != nil {
 		log.Error("application error", slog.String("error", err.Error()))
 		os.Exit(1)
