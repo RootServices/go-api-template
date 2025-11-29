@@ -67,6 +67,18 @@ func TestTemplateGenerationAndTest(t *testing.T) {
 		t.Fatalf("failed to run git init: %v\nOutput: %s", err, output)
 	}
 
+	cmd = exec.Command("git", "config", "user.name", "tmack")
+	cmd.Dir = projectDir
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("failed to configure git user.name: %v", err)
+	}
+
+	cmd = exec.Command("git", "config", "user.email", "tmack@fake-email.com")
+	cmd.Dir = projectDir
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("failed to configure git user.email: %v", err)
+	}
+
 	// Create an initial commit so git rev-parse HEAD works
 	cmd = exec.Command("git", "add", ".")
 	cmd.Dir = projectDir
@@ -76,8 +88,7 @@ func TestTemplateGenerationAndTest(t *testing.T) {
 
 	cmd = exec.Command("git", "commit", "-m", "Initial commit")
 	cmd.Dir = projectDir
-	// Configure git user if needed for CI environments, but locally it should be fine.
-	// We'll ignore errors here as it might fail if user not configured, but usually works locally.
+
 	if err := cmd.Run(); err != nil {
 		t.Fatalf("failed to add a git commit: %v", err)
 	}
