@@ -29,4 +29,4 @@ clean:
 	@echo "Cleaning up the build directory"
 	rm -rf bin
 	rm -rf internal/version/version.json
-	rm -rf coverage.out
+	rm -rf coverage*.out
