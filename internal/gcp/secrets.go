@@ -85,7 +85,7 @@ func (r *secretRepository) GetSecret(ctx context.Context, projectID, secretID, v
 	return string(result.Payload.Data), nil
 }
 
-// Close closes the underlying Secret Manager client.
+// closes the underlying Secret Manager client.
 func (r *secretRepository) Close() error {
 	return r.client.Close()
 }

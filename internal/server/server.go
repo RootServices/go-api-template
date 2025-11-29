@@ -30,7 +30,7 @@ func NewServer(version version.Version) http.Handler {
 
 	// handlerWithLoggingBeta := loggingMiddleware(handlerWithRoutes)
 
-	handlerWithLogging := middleware.StructuredLoggingMiddleware(handlerWithRoutes)
+	handlerWithLogging := middleware.RequestLoggingMiddleware(handlerWithRoutes)
 	handlerWithHeaders := middleware.HeaderMiddleware(handlerWithLogging, version)
 	handlerWithCompression := externalHandlers.CompressHandler(handlerWithHeaders)
 	// Apply middleware

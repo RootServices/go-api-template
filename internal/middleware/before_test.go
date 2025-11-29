@@ -9,6 +9,7 @@ import (
 	"go-api-template/internal/version"
 )
 
+// tests to make sure headers are added to response
 func TestHeaderMiddleware(t *testing.T) {
 	tests := []struct {
 		name                  string
@@ -90,6 +91,7 @@ func TestHeaderMiddleware(t *testing.T) {
 	}
 }
 
+// tests to make sure logger is added to context
 func TestHeaderMiddleware_LoggerInContext(t *testing.T) {
 	// Test that the middleware adds a logger to the context
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -110,4 +112,85 @@ func TestHeaderMiddleware_LoggerInContext(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler.ServeHTTP(w, req)
+}
+
+// tests to make sure logger is added to context
+func TestRequestLoggingMiddleware(t *testing.T) {
+	tests := []struct {
+		name   string
+		method string
+		path   string
+	}{
+		{
+			name:   "GET request to /api/health",
+			method: http.MethodGet,
+			path:   "/api/health",
+		},
+		{
+			name:   "POST request to /api/users",
+			method: http.MethodPost,
+			path:   "/api/users",
+		},
+		{
+			name:   "PUT request to /api/users/123",
+			method: http.MethodPut,
+			path:   "/api/users/123",
+		},
+		{
+			name:   "DELETE request to /api/users/456",
+			method: http.MethodDelete,
+			path:   "/api/users/456",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a test handler that verifies the logger has request info
+			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify logger is in context
+				log := logger.FromContext(r.Context())
+				if log == nil {
+					t.Error("expected logger to be in context")
+				}
+				w.WriteHeader(http.StatusOK)
+			})
+
+			// Wrap the handler with the middleware
+			handler := RequestLoggingMiddleware(testHandler)
+
+			// Create a request
+			req := httptest.NewRequest(tt.method, tt.path, nil)
+			w := httptest.NewRecorder()
+
+			handler.ServeHTTP(w, req)
+
+			// Verify the handler was called successfully
+			if w.Code != http.StatusOK {
+				t.Errorf("expected status code %d; got %d", http.StatusOK, w.Code)
+			}
+		})
+	}
+}
+
+func TestRequestLoggingMiddleware_LoggerInContext(t *testing.T) {
+	// Test that the middleware adds a logger with request info to the context
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Verify logger is in context
+		log := logger.FromContext(r.Context())
+		if log == nil {
+			t.Error("expected logger to be in context")
+		}
+		w.WriteHeader(http.StatusOK)
+	})
+
+	handler := RequestLoggingMiddleware(testHandler)
+	req := httptest.NewRequest(http.MethodGet, "/test/path", nil)
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req)
+
+	// Verify the handler was called
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status code %d; got %d", http.StatusOK, w.Code)
+	}
 }

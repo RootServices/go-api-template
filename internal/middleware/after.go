@@ -8,6 +8,7 @@ import (
 
 // middleware for post processing (after the handler has completed)
 
+// need to wrap the response writer to capture the status code
 type loggingResponseWriter struct {
 	http.ResponseWriter
 	statusCode int

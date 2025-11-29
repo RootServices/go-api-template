@@ -39,18 +39,18 @@ func HeaderMiddleware(next http.Handler, version version.Version) http.Handler {
 		w.Header().Set(BuildHeader, version.Build)
 		w.Header().Set(BranchHeader, version.Branch)
 
-		reqLogger.Info("headerMiddleware completed")
+		reqLogger.Debug("HeaderMiddleware completed")
 		next.ServeHTTP(w, r)
 	})
 }
 
-func StructuredLoggingMiddleware(next http.Handler) http.Handler {
+func RequestLoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqLogger := logger.WithRequestInfo(r.Context(), r)
 		ctx := logger.ToContext(r.Context(), reqLogger)
 		r = r.WithContext(ctx)
 
-		reqLogger.Info("structuredLoggingMiddleware completed")
+		reqLogger.Debug("RequestLoggingMiddleware completed")
 		next.ServeHTTP(w, r)
 	})
 }

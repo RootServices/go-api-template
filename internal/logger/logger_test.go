@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"context"
 	"log/slog"
+	"net/http"
+	"net/url"
+	"strconv"
 	"testing"
 
 	"go-api-template/internal/version"
@@ -20,6 +23,21 @@ func TestInit(t *testing.T) {
 	}
 
 	Init(version)
+
+	// Verify that the default logger has been set
+	if slog.Default() == oldDefault {
+		t.Error("Init() did not set a new default logger")
+	}
+}
+
+func TestWithServerInfo(t *testing.T) {
+	oldDefault := slog.Default()
+	defer slog.SetDefault(oldDefault)
+
+	port := "8080"
+
+	logger := WithServerInfo(port)
+	logger.Info("test with server info message")
 
 	// Verify that the default logger has been set
 	if slog.Default() == oldDefault {
@@ -47,6 +65,59 @@ func TestWithCorrelationID(t *testing.T) {
 	// Check that the correlation ID is in the output
 	if !bytes.Contains(buf.Bytes(), []byte(correlationID)) {
 		t.Errorf("Expected correlation ID %q in log output, got: %s", correlationID, output)
+	}
+}
+
+func TestWithRequestInfo(t *testing.T) {
+	var buf bytes.Buffer
+	handler := slog.NewJSONHandler(&buf, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	})
+	slog.SetDefault(slog.New(handler))
+
+	req := &http.Request{
+		Method: "GET",
+		URL:    &url.URL{Path: "/test"},
+	}
+	logger := WithRequestInfo(context.Background(), req)
+	logger.Info("test message")
+
+	output := buf.String()
+	if output == "" {
+		t.Fatal("Expected log output, got empty string")
+	}
+
+	// Check that the method is in the output
+	if !bytes.Contains(buf.Bytes(), []byte("GET")) {
+		t.Errorf("Expected method GET in log output, got: %s", output)
+	}
+
+	// Check that the Path is in the output
+	if !bytes.Contains(buf.Bytes(), []byte("/test")) {
+		t.Errorf("Expected path /test in log output, got: %s", output)
+	}
+}
+
+func TestWithResponseInfo(t *testing.T) {
+	statusCode := 200
+
+	var buf bytes.Buffer
+	handler := slog.NewJSONHandler(&buf, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	})
+	slog.SetDefault(slog.New(handler))
+
+	logger := WithResponseInfo(context.Background(), statusCode)
+	logger.Info("test message")
+
+	output := buf.String()
+	if output == "" {
+		t.Fatal("Expected log output, got empty string")
+	}
+
+	// Check that the status code is in the output
+	if !bytes.Contains(buf.Bytes(), []byte(strconv.Itoa(statusCode))) {
+		t.Errorf("Expected status code %d in log output, got: %s", statusCode, output)
 	}
 }
 
