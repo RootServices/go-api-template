@@ -1,11 +1,8 @@
 {
     "project_name": "Go API Project",
     "project_slug": "go-api-project",
-    "github_username": "yourusername",
-    "github_organization": "star-fighter",
     "module_name": "github.com/star-fighter/go-api-project",
     "project_description": "A Go REST API built with best practices and modern standards",
-    "author_name": "Your Name",
     "go_version": "1.24.0",
     "docker_image_name": "go-api-project",
     "port": "8080"

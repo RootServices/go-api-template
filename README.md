@@ -69,8 +69,6 @@ You'll be asked to provide values for:
 | `project_slug` | URL-safe project name | Auto-generated | "my-awesome-api" |
 | `module_name` | Go module import path | github.com/... | "github.com/user/my-api" |
 | `project_description` | Short project description | "A Go REST API..." | "API for managing tasks" |
-| `author_name` | Project author | "Your Name" | "John Doe" |
-| `github_username` | GitHub username | "yourusername" | "johndoe" |
 | `go_version` | Go version | "1.24.0" | "1.23.0" |
 | `docker_image_name` | Docker image name | Auto-generated | "my-awesome-api" |
 | `port` | Default server port | "8080" | "3000" |
