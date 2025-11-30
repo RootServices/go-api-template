@@ -107,6 +107,16 @@ Then run:
 cookiecutter https://gitlab.com/star-fighter/go-api-cookiecutter --config-file config.yaml
 ```
 
+Once the project is generated then do:
+
+```bash
+git init
+git add .
+git commit -m "feat: scaffold project"
+```
+
+Which is needed to generate the version.json file that the project depends on.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
