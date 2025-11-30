@@ -13,7 +13,7 @@ run: version
 	go run ./cmd/main.go
 
 run-docker:
-	docker run -p {{cookiecutter.port}}:{{cookiecutter.port}} {{cookiecutter.docker_image_name}}
+	docker run -p {{cookiecutter.docker_host_port}}:8080 {{cookiecutter.docker_image_name}}
 
 test: version
 	go test -coverprofile=coverage.out ./...

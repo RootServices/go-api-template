@@ -77,7 +77,8 @@ Run the application using the Makefile:
 make run
 ```
 
-The server will start on `http://localhost:{{cookiecutter.port}}` (or the port specified in the `PORT` environment variable).
+The server will start on `http://localhost:8080` \
+Unless specified otherwise with the `PORT` environment variable.
 
 ### Running Tests
 
@@ -106,7 +107,7 @@ The compiled binary will be available at `bin/server`.
 
 ### Environment Variables
 
-- `PORT` - Server port (default: `{{cookiecutter.port}}`)
+- `PORT` - Server port (default: `8080`)
 - `GOOGLE_APPLICATION_CREDENTIALS` - Path to GCP service account key (for Secret Manager)
 
 ### Logging
@@ -156,8 +157,8 @@ make run-docker
 Or With environment variables:
 
 ```bash
-docker run -p {{cookiecutter.port}}:{{cookiecutter.port}} \
-  -e PORT={{cookiecutter.port}} \
+docker run -p {{cookiecutter.docker_host_port}}:8080 \
+  -e PORT=8080 \
   -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/key.json \
   -v /path/to/key.json:/secrets/key.json \
   {{cookiecutter.docker_image_name}}

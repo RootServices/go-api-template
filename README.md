@@ -71,7 +71,7 @@ You'll be asked to provide values for:
 | `project_description` | Short project description | "A Go REST API..." | "API for managing tasks" |
 | `go_version` | Go version | "1.24.0" | "1.23.0" |
 | `docker_image_name` | Docker image name | Auto-generated | "my-awesome-api" |
-| `port` | Default server port | "8080" | "3000" |
+| `docker_host_port` | Docker host port for running the container | "8080" | "3000" |
 
 
 ## Example Usage
@@ -94,14 +94,11 @@ Create a `config.yaml`:
 default_context:
   project_name: "Product API"
   project_slug: "product-api"
-  author_name: "tmack"
-  github_username: "obiwan"
-  github_organizatin: "star-fighter"
   module_name: "gitlab.com/star-fighter/product-api"
   project_description: "A REST API for products"
   go_version: "1.24.0"
   docker_image_name: "product-api"
-  port: "3000"
+  docker_host_port: "3000"
 ```
 
 Then run:

@@ -5,5 +5,5 @@
     "project_description": "A Go REST API built with best practices and modern standards",
     "go_version": "1.24.0",
     "docker_image_name": "go-api-project",
-    "port": "8080"
+    "docker_host_port": "8080"
 }
