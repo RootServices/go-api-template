@@ -38,7 +38,7 @@ pipx install cookiecutter
 ### 2. Generate Your Project
 
 ```bash
-cookiecutter https://github.com/yourusername/go-api-cookiecutter
+cookiecutter https://gitlab.com/star-fighter/go-api-cookiecutter
 ```
 
 Or if using a local copy:
@@ -81,7 +81,7 @@ You'll be asked to provide values for:
 ### Non-Interactive Mode
 
 ```bash
-cookiecutter https://github.com/yourusername/go-api-cookiecutter \
+cookiecutter https://gitlab.com/star-fighter/go-api-cookiecutter \
   --no-input \
   project_name="Task Manager API" \
   github_username="johndoe" \
@@ -94,17 +94,22 @@ Create a `config.yaml`:
 
 ```yaml
 default_context:
-  project_name: "Task Manager API"
-  author_name: "John Doe"
-  github_username: "johndoe"
-  go_version: "1.23.0"
+  project_name: "Product API"
+  project_slug: "product-api"
+  author_name: "tmack"
+  github_username: "obiwan"
+  github_organizatin: "star-fighter"
+  module_name: "gitlab.com/star-fighter/product-api"
+  project_description: "A REST API for products"
+  go_version: "1.24.0"
+  docker_image_name: "product-api"
   port: "3000"
 ```
 
 Then run:
 
 ```bash
-cookiecutter https://github.com/yourusername/go-api-cookiecutter --config-file config.yaml
+cookiecutter https://gitlab.com/star-fighter/go-api-cookiecutter --config-file config.yaml
 ```
 
 ## Contributing
