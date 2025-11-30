@@ -13,7 +13,6 @@ import (
 
 	externalHandlers "github.com/gorilla/handlers"
 
-	"{{cookiecutter.module_name}}/internal/handler"
 	"{{cookiecutter.module_name}}/internal/logger"
 	"{{cookiecutter.module_name}}/internal/middleware"
 	"{{cookiecutter.module_name}}/internal/version"
@@ -35,12 +34,6 @@ func NewServer(version version.Version) http.Handler {
 	handlerWithCompression := externalHandlers.CompressHandler(handlerWithHeaders)
 	// Apply middleware
 	return handlerWithCompression
-}
-
-func addRoutes(mux *http.ServeMux, version version.Version) {
-	mux.Handle("GET /api/hello", handler.HandleHelloWorld())
-	mux.Handle("GET /healthz", handler.HandleHealthz(version))
-	mux.Handle("/", http.NotFoundHandler())
 }
 
 type PortGenerator func() string

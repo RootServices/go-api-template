@@ -33,6 +33,7 @@ This project follows best practices from the [Grafana Labs blog post on building
 │   │   ├── logger.go        # Logging utilities
 │   │   └── logger_test.go   # Logger tests
 │   ├── server/
+│   │   ├── routes.go        # HTTP server routes / API surface
 │   │   ├── server.go        # HTTP server setup
 │   │   └── server_test.go   # HTTP server integration tests
 │   ├── middleware/
