@@ -13,17 +13,19 @@ import (
 
 	externalHandlers "github.com/gorilla/handlers"
 
+	"{{cookiecutter.module_name}}/internal/entity"
 	"{{cookiecutter.module_name}}/internal/logger"
 	"{{cookiecutter.module_name}}/internal/middleware"
+	"{{cookiecutter.module_name}}/internal/repository"
 	"{{cookiecutter.module_name}}/internal/version"
 )
 
 // NewServer creates a new http.Handler with routes configured.
 // It takes dependencies as arguments (none in this simple example).
-func NewServer(version version.Version) http.Handler {
+func NewServer(version version.Version, {{cookiecutter.entity_name_lower}}Repo *repository.EntityRepository[entity.{{cookiecutter.entity_name}}]) http.Handler {
 	mux := http.NewServeMux()
 
-	addRoutes(mux, version)
+	addRoutes(mux, version, {{cookiecutter.entity_name_lower}}Repo)
 
 	var handlerWithRoutes http.Handler = mux
 
@@ -75,13 +77,14 @@ type StartServerParams struct {
 	Version         version.Version
 	PortGeneratorFn PortGenerator
 	BlockFn         BlockUntilServerShutdown
+	{{cookiecutter.entity_name}}Repo     *repository.EntityRepository[entity.{{cookiecutter.entity_name}}]
 }
 
 func StartServer(params StartServerParams) (*http.Server, error) {
 	copyCtx, cancel := signal.NotifyContext(params.ParentCtx, os.Interrupt)
 	defer cancel()
 
-	srv := NewServer(params.Version)
+	srv := NewServer(params.Version, params.{{cookiecutter.entity_name}}Repo)
 
 	// Use a configurable port or default to 8080
 	port := params.PortGeneratorFn()

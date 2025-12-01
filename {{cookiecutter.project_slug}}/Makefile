@@ -1,6 +1,7 @@
-.PHONY: clean run test build version
+.PHONY: clean run test build version compose-up compose-down migrate-up migrate-down migrate-status
 BUILD=`git rev-parse --short HEAD`
 BRANCH=`git rev-parse --abbrev-ref HEAD`
+DATABASE_URL=postgres://{{cookiecutter.entity_name_lower}}_user:{{cookiecutter.entity_name_lower}}_password@localhost:5432/{{cookiecutter.entity_name_lower}}_api?sslmode=disable
 
 version:
 	echo "{" > internal/version/version.json
@@ -30,3 +31,19 @@ clean:
 	rm -rf bin
 	rm -rf internal/version/version.json
 	rm -rf coverage*.out
+
+compose-up:
+	docker compose up -d
+	make migrate-up
+
+compose-down:
+	docker compose down
+
+migrate-up:
+	~/go/bin/goose -dir migrations postgres "$(DATABASE_URL)" up
+
+migrate-down:
+	~/go/bin/goose -dir migrations postgres "$(DATABASE_URL)" down
+
+migrate-status:
+	~/go/bin/goose -dir migrations postgres "$(DATABASE_URL)" status

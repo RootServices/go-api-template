@@ -50,7 +50,7 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 				Build:  "test-build",
 				Branch: "test-branch",
 			}
-			server := NewServer(expectedVersion)
+			server := NewServer(expectedVersion, nil)
 			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			if tt.existingCorrelationID != "" {
 				req.Header.Set(middleware.CorrelationIDHeader, tt.existingCorrelationID)

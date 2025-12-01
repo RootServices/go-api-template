@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:18.1
+    container_name: {{cookiecutter.project_slug}}-postgres
+    environment:
+      POSTGRES_USER: {{cookiecutter.entity_name_lower}}_user
+      POSTGRES_PASSWORD: {{cookiecutter.entity_name_lower}}_password
+      POSTGRES_DB: {{cookiecutter.entity_name_lower}}_api
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U {{cookiecutter.entity_name_lower}}_user -d {{cookiecutter.entity_name_lower}}_api" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - {{cookiecutter.project_slug}}-network
+
+  {{cookiecutter.docker_image_name}}:
+    image: {{cookiecutter.docker_image_name}}
+    container_name: {{cookiecutter.docker_image_name}}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "{{cookiecutter.docker_host_port}}:8080"
+    environment:
+      DATABASE_URL: "postgres://{{cookiecutter.entity_name_lower}}_user:{{cookiecutter.entity_name_lower}}_password@postgres:5432/{{cookiecutter.entity_name_lower}}_api?sslmode=disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - {{cookiecutter.entity_name_lower}}-network
+
+volumes:
+  postgres_data:
+
+
+networks:
+  {{cookiecutter.entity_name_lower}}-network:
+    driver: bridge

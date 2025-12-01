@@ -16,7 +16,7 @@ func TestHandleHelloWorld(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := server.NewServer(version)
+	server := server.NewServer(version, nil)
 	req := httptest.NewRequest(http.MethodGet, "/api/hello", nil)
 	w := httptest.NewRecorder()
 
@@ -41,7 +41,7 @@ func TestHandleHealthz(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := server.NewServer(version)
+	server := server.NewServer(version, nil)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	w := httptest.NewRecorder()
 

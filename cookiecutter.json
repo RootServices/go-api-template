@@ -1,4 +1,6 @@
 {
+    "entity_name": "Product",
+    "entity_name_lower": "product",
     "project_name": "Go API Project",
     "project_slug": "go-api-project",
     "module_name": "github.com/star-fighter/go-api-project",
