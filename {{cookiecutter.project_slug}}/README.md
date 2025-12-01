@@ -128,6 +128,44 @@ make build
 
 The compiled binary will be available at `bin/server`.
 
+### Building Docker Image
+
+```bash
+make build-docker
+```
+
+The Docker image will be available at `{{cookiecutter.docker_image_name}}`.
+
+### Running Docker Container
+
+```bash
+make run-docker
+```
+
+### Docker Compose
+
+```bash
+make compose-up
+```
+
+### Database Migrations
+
+```bash
+make migrate-up
+```
+
+### Database Migrations Down
+
+```bash
+make migrate-down
+```
+
+### Database Migrations Status
+
+```bash
+make migrate-status
+```
+
 ## Configuration
 
 ### Environment Variables
