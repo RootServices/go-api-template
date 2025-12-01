@@ -20,13 +20,13 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 	}{
 		{
 			name:                  "hello endpoint with existing correlation-id",
-			path:                  "/api/hello",
+			path:                  "/api/v1/hello",
 			existingCorrelationID: "test-correlation-id-456",
 			wantPreserved:         true,
 		},
 		{
 			name:                  "hello endpoint without correlation-id",
-			path:                  "/api/hello",
+			path:                  "/api/v1/hello",
 			existingCorrelationID: "",
 			wantPreserved:         false,
 		},

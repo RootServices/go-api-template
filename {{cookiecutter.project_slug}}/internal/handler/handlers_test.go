@@ -17,7 +17,7 @@ func TestHandleHelloWorld(t *testing.T) {
 		Branch: "test-branch",
 	}
 	server := server.NewServer(version, nil)
-	req := httptest.NewRequest(http.MethodGet, "/api/hello", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/hello", nil)
 	w := httptest.NewRecorder()
 
 	server.ServeHTTP(w, req)

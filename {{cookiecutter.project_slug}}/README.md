@@ -14,6 +14,21 @@ This project follows best practices from the [Grafana Labs blog post on building
 - Repository pattern for external dependencies
 - Interface-based design for testability
 
+## API Endpoints
+
+### Health Check
+- GET /healthz
+
+### Hello World
+- GET /api/v1/hello
+
+### {{cookiecutter.entity_name}}
+- GET /api/v1/{{cookiecutter.entity_name_lower}}
+- GET /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+- POST /api/v1/{{cookiecutter.entity_name_lower}}
+- PUT /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+- DELETE /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+
 ## Project Structure
 
 ```
@@ -137,7 +152,7 @@ The application uses structured logging with `log/slog`. Each request is automat
   "msg": "handling hello world request",
   "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
   "method": "GET",
-  "path": "/api/hello",
+  "path": "/api/v1/hello",
   "build": "abc123",
   "branch": "main" 
 }

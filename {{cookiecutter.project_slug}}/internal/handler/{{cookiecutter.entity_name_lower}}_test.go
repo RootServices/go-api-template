@@ -103,7 +103,7 @@ func Test{{cookiecutter.entity_name}}Handler_Create(t *testing.T) {
 				}
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/api/{{cookiecutter.entity_name_lower}}", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/{{cookiecutter.entity_name_lower}}", bytes.NewReader(body))
 			w := httptest.NewRecorder()
 
 			h.HandleCreate{{cookiecutter.entity_name}}().ServeHTTP(w, req)
@@ -183,7 +183,7 @@ func Test{{cookiecutter.entity_name}}Handler_Get(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/api/{{cookiecutter.entity_name_lower}}/"+tt.id, nil)
+			req := httptest.NewRequest(http.MethodGet, "/api/v1/{{cookiecutter.entity_name_lower}}/"+tt.id, nil)
 			req.SetPathValue("id", tt.id)
 			w := httptest.NewRecorder()
 
@@ -283,7 +283,7 @@ func Test{{cookiecutter.entity_name}}Handler_Update(t *testing.T) {
 				}
 			}
 
-			req := httptest.NewRequest(http.MethodPut, "/api/{{cookiecutter.entity_name_lower}}/"+tt.id, bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/{{cookiecutter.entity_name_lower}}/"+tt.id, bytes.NewReader(body))
 			req.SetPathValue("id", tt.id)
 			w := httptest.NewRecorder()
 
@@ -335,7 +335,7 @@ func Test{{cookiecutter.entity_name}}Handler_Delete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodDelete, "/api/{{cookiecutter.entity_name_lower}}/"+tt.id, nil)
+			req := httptest.NewRequest(http.MethodDelete, "/api/v1/{{cookiecutter.entity_name_lower}}/"+tt.id, nil)
 			req.SetPathValue("id", tt.id)
 			w := httptest.NewRecorder()
 
@@ -414,7 +414,7 @@ func Test{{cookiecutter.entity_name}}Handler_List(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/api/{{cookiecutter.entity_name_lower}}"+tt.query, nil)
+			req := httptest.NewRequest(http.MethodGet, "/api/v1/{{cookiecutter.entity_name_lower}}"+tt.query, nil)
 			w := httptest.NewRecorder()
 
 			h.HandleList{{cookiecutter.entity_name}}().ServeHTTP(w, req)
