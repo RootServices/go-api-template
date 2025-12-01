@@ -10,4 +10,9 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '1.24'
-      - run: make test
+      - name: Install Cookiecutter
+        run: |
+          apt-get update && apt-get install -y python3-pip git
+          pip3 install cookiecutter --break-system-packages
+      - name: run tests
+        run: make test
