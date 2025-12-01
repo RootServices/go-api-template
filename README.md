@@ -60,6 +60,8 @@ You'll be asked to provide values for:
 - **go_version**: Go version to use (default: "1.24.0")
 - **docker_image_name**: Docker image name (auto-generated from project_slug)
 - **docker_host_port**: Docker host port for running the container(default: "8080")
+- **entity_name**: Name of the entity to be used in the API (e.g., "Product")
+- **entity_name_lower**: Lowercase version of entity_name
 
 ## Template Variables
 
@@ -72,7 +74,8 @@ You'll be asked to provide values for:
 | `go_version` | Go version | "1.24.0" | "1.23.0" |
 | `docker_image_name` | Docker image name | Auto-generated | "my-awesome-api" |
 | `docker_host_port` | Docker host port for running the container | "8080" | "3000" |
-
+| `entity_name` | Name of the entity to be used in the API (e.g., "Product") | "Product" | "Product" |
+| `entity_name_lower` | Lowercase version of entity_name | "product" | "product" |
 
 ## Example Usage
 
