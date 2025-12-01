@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - {{cookiecutter.project_slug}}-network
+      - {{cookiecutter.entity_name_lower}}-network
 
   {{cookiecutter.docker_image_name}}:
     image: {{cookiecutter.docker_image_name}}
