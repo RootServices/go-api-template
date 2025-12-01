@@ -20,13 +20,13 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 	}{
 		{
 			name:                  "hello endpoint with existing correlation-id",
-			path:                  "/api/hello",
+			path:                  "/api/v1/hello",
 			existingCorrelationID: "test-correlation-id-456",
 			wantPreserved:         true,
 		},
 		{
 			name:                  "hello endpoint without correlation-id",
-			path:                  "/api/hello",
+			path:                  "/api/v1/hello",
 			existingCorrelationID: "",
 			wantPreserved:         false,
 		},
@@ -50,7 +50,7 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 				Build:  "test-build",
 				Branch: "test-branch",
 			}
-			server := NewServer(expectedVersion)
+			server := NewServer(expectedVersion, nil)
 			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			if tt.existingCorrelationID != "" {
 				req.Header.Set(middleware.CorrelationIDHeader, tt.existingCorrelationID)

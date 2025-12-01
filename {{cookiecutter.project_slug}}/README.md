@@ -14,6 +14,21 @@ This project follows best practices from the [Grafana Labs blog post on building
 - Repository pattern for external dependencies
 - Interface-based design for testability
 
+## API Endpoints
+
+### Health Check
+- GET /healthz
+
+### Hello World
+- GET /api/v1/hello
+
+### {{cookiecutter.entity_name}}
+- GET /api/v1/{{cookiecutter.entity_name_lower}}
+- GET /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+- POST /api/v1/{{cookiecutter.entity_name_lower}}
+- PUT /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+- DELETE /api/v1/{{cookiecutter.entity_name_lower}}/{id}
+
 ## Project Structure
 
 ```
@@ -36,13 +51,22 @@ This project follows best practices from the [Grafana Labs blog post on building
 │   │   ├── routes.go        # HTTP server routes / API surface
 │   │   ├── server.go        # HTTP server setup
 │   │   └── server_test.go   # HTTP server integration tests
+│   ├── service/
+│   │   ├── {{cookiecutter.entity_name_lower}}_service.go        # Service layer
+│   │   ├── {{cookiecutter.entity_name_lower}}_service_test.go   # Service layer tests
+│   ├── repository/
+│   │   ├── {{cookiecutter.entity_name_lower}}_repository.go        # Repository layer
+│   │   ├── {{cookiecutter.entity_name_lower}}_repository_test.go   # Repository layer tests  
 │   ├── middleware/
 │   │   ├── after.go         # post processing middleware
 │   │   ├── before.go        # pre processing middleware
 │   │   └── before_test.go   # pre processing middleware tests
+│   ├── migrations/
+│   │   ├── 20251130172527_create_{{cookiecutter.entity_name_lower}}s_table.go         # migration file
 │   ├── version/
 │   │   ├── version.go       # read from version.json and store in struct
 │   │   └── version_test.go  # read from version.json and store in struct tests
+├── docker-compose.yml       # docker-compose configuration, psql, and this application
 ├── Dockerfile               # Multi-stage Docker build
 ├── Makefile                 # Build and test commands
 ├── go.mod                   # Go module dependencies
@@ -128,7 +152,7 @@ The application uses structured logging with `log/slog`. Each request is automat
   "msg": "handling hello world request",
   "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
   "method": "GET",
-  "path": "/api/hello",
+  "path": "/api/v1/hello",
   "build": "abc123",
   "branch": "main" 
 }

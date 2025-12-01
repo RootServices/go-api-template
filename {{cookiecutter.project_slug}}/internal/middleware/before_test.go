@@ -122,24 +122,24 @@ func TestRequestLoggingMiddleware(t *testing.T) {
 		path   string
 	}{
 		{
-			name:   "GET request to /api/health",
+			name:   "GET request to /api/v1/health",
 			method: http.MethodGet,
-			path:   "/api/health",
+			path:   "/api/v1/health",
 		},
 		{
-			name:   "POST request to /api/users",
+			name:   "POST request to /api/v1/users",
 			method: http.MethodPost,
-			path:   "/api/users",
+			path:   "/api/v1/users",
 		},
 		{
-			name:   "PUT request to /api/users/123",
+			name:   "PUT request to /api/v1/users/123",
 			method: http.MethodPut,
-			path:   "/api/users/123",
+			path:   "/api/v1/users/123",
 		},
 		{
-			name:   "DELETE request to /api/users/456",
+			name:   "DELETE request to /api/v1/users/456",
 			method: http.MethodDelete,
-			path:   "/api/users/456",
+			path:   "/api/v1/users/456",
 		},
 	}
 
