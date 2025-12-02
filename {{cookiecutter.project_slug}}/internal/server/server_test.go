@@ -50,7 +50,10 @@ func TestServer_HeaderMiddleware_Integration(t *testing.T) {
 				Build:  "test-build",
 				Branch: "test-branch",
 			}
-			server := NewServer(expectedVersion, nil)
+			deps := Dependencies{
+				{{cookiecutter.entity_name}}Service: nil,
+			}
+			server := NewServer(expectedVersion, deps)
 			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			if tt.existingCorrelationID != "" {
 				req.Header.Set(middleware.CorrelationIDHeader, tt.existingCorrelationID)
@@ -109,8 +112,11 @@ func TestServer_StartServer(t *testing.T) {
 		PortGeneratorFn: portGeneratorFn,
 		BlockFn:         noopBlockFn,
 	}
+	deps := Dependencies{
+		{{cookiecutter.entity_name}}Service: nil,
+	}
 
-	server, err := StartServer(params)
+	server, err := StartServer(params, deps)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}

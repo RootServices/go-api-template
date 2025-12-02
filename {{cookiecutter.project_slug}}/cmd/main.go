@@ -5,12 +5,12 @@ import (
 	"log/slog"
 	"os"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"{{cookiecutter.module_name}}/internal/db"
 	"{{cookiecutter.module_name}}/internal/entity"
 	"{{cookiecutter.module_name}}/internal/logger"
 	"{{cookiecutter.module_name}}/internal/repository"
 	"{{cookiecutter.module_name}}/internal/server"
+	"{{cookiecutter.module_name}}/internal/service"
 	"{{cookiecutter.module_name}}/internal/version"
 )
 
@@ -34,23 +34,23 @@ func main() {
 	}
 
 	// Initialize database connection
-	db, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
-	if err != nil {
-		log.Error("failed to connect to database", slog.String("error", err.Error()))
-		os.Exit(1)
-	}
+	db := db.MakeDb(databaseURL, log)
 
 	// Initialize repository
 	{{cookiecutter.entity_name_lower}}Repo := repository.NewEntityRepository[entity.{{cookiecutter.entity_name}}](db)
+	{{cookiecutter.entity_name_lower}}Service := service.New{{cookiecutter.entity_name}}Service({{cookiecutter.entity_name_lower}}Repo)
 
 	params := server.StartServerParams{
 		ParentCtx:       ctx,
 		Version:         version,
 		PortGeneratorFn: server.Port,
 		BlockFn:         server.Block,
-		{{cookiecutter.entity_name}}Repo:     {{cookiecutter.entity_name_lower}}Repo,
 	}
-	_, err = server.StartServer(params)
+
+	deps := server.Dependencies{
+		{{cookiecutter.entity_name}}Service: {{cookiecutter.entity_name_lower}}Service,
+	}
+	_, err = server.StartServer(params, deps)
 
 	if err != nil {
 		log.Error("application error", slog.String("error", err.Error()))

@@ -16,7 +16,10 @@ func TestHandleHelloWorld(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := server.NewServer(version, nil)
+	deps := server.Dependencies{
+		{{cookiecutter.entity_name}}Service: nil,
+	}
+	server := server.NewServer(version, deps)
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/hello", nil)
 	w := httptest.NewRecorder()
 
@@ -41,7 +44,10 @@ func TestHandleHealthz(t *testing.T) {
 		Build:  "test-build",
 		Branch: "test-branch",
 	}
-	server := server.NewServer(version, nil)
+	deps := server.Dependencies{
+		{{cookiecutter.entity_name}}Service: nil,
+	}
+	server := server.NewServer(version, deps)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	w := httptest.NewRecorder()
 

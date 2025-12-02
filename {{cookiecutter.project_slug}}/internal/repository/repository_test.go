@@ -4,14 +4,14 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"github.com/google/uuid"
+	"{{cookiecutter.module_name}}/internal/db"
 	"{{cookiecutter.module_name}}/internal/entity"
 )
 
 func setupTestDB(t *testing.T) *gorm.DB {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	db, err := db.MakeDbSqlite()
 	if err != nil {
 		t.Fatalf("failed to connect database: %v", err)
 	}
