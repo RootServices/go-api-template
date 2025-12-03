@@ -1,9 +1,10 @@
 {
     "entity_name": "Product",
-    "entity_name_lower": "product",
+    "entity_name_lower": "{{ cookiecutter.entity_name|lower }}",
     "project_name": "Go API Project",
     "project_slug": "go-api-project",
     "module_name": "github.com/star-fighter/go-api-project",
+    "now": "{{ now }}",
     "project_description": "A Go REST API built with best practices and modern standards",
     "go_version": "1.24.0",
     "docker_image_name": "go-api-project",

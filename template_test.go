@@ -34,7 +34,7 @@ func TestTemplateGenerationAndTest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tempDir)
+	// defer os.RemoveAll(tempDir)
 
 	// Get the absolute path to the template directory (current directory)
 	templateDir, err := os.Getwd()

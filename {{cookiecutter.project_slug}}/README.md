@@ -96,6 +96,31 @@ go mod download
 
 ### Running Locally
 
+Once the project is generated from cookiecutter:
+
+```bash
+git init
+git add .
+git commit -m "feat: scaffold project"
+```
+
+Start the database container and run the migrations
+
+```bash
+make compose-up
+```
+
+Add a {{ cookiecutter.entity_name_lower }}
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"name":"Obi-Wan Kenobi"}' http://localhost:{{ cookiecutter.docker_host_port }}/v1/{{ cookiecutter.entity_name_lower }}
+```
+
+Get all {{ cookiecutter.entity_name_lower }}s
+```bash
+curl http://localhost:{{ cookiecutter.docker_host_port }}/v1/{{ cookiecutter.entity_name_lower }}
+```
+
+
 Run the application using the Makefile:
 
 ```bash
