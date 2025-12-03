@@ -51,31 +51,18 @@ cookiecutter /path/to/go-api-template
 
 ### 3. Answer the Prompts
 
-You'll be asked to provide values for:
-
-- **project_name**: Human-readable project name (e.g., "Product API")
-- **project_slug**: URL/filesystem-safe name (auto-generated from project_name)
-- **module_name**: Go module name (e.g., "github.com/rootservices/product-api")
-- **project_description**: Short description of your project
-- **go_version**: Go version to use (default: "1.24.0")
-- **docker_image_name**: Docker image name (auto-generated from project_slug)
-- **docker_host_port**: Docker host port for running the container(default: "8080")
-- **entity_name**: Name of the entity to be used in the API (e.g., "Product")
-- **entity_name_lower**: Lowercase version of entity_name
-
-## Template Variables
-
 | Variable | Description | Default | Example |
 |----------|-------------|---------|---------|
-| `project_name` | Human-readable project name | "Go API Project" | "My Awesome API" |
-| `project_slug` | URL-safe project name | Auto-generated | "my-awesome-api" |
-| `module_name` | Go module import path | github.com/... | "github.com/user/my-api" |
-| `project_description` | Short project description | "A Go REST API..." | "API for managing tasks" |
-| `go_version` | Go version | "1.24.0" | "1.23.0" |
-| `docker_image_name` | Docker image name | Auto-generated | "my-awesome-api" |
 | `docker_host_port` | Docker host port for running the container | "8080" | "3000" |
+| `docker_image_name` | Docker image name | Auto-generated | "product-api" |
 | `entity_name` | Name of the entity to be used in the API (e.g., "Product") | "Product" | "Product" |
 | `entity_name_lower` | Lowercase version of entity_name | "product" | "product" |
+| `go_version` | Go version | "1.24.0" | "1.23.0" |
+| `module_name` | Go module import path | github.com/... | "github.com/rootservices/product-api" |
+| `now` | Current timestamp in UTC | Auto-generated with UTC | "20251130172527" |
+| `project_description` | Short project description | "A Go REST API..." | "API for managing products" |
+| `project_name` | Human-readable project name | "Go API Project" | "Product API" |
+| `project_slug` | URL-safe project name | Auto-generated | "product-api" |
 
 ## Example Usage
 
@@ -94,6 +81,7 @@ Create a `config.yaml`:
 
 ```yaml
 default_context:
+  entity_name: "Product"
   project_name: "Product API"
   project_slug: "product-api"
   module_name: "github.com/rootservices/product-api"
@@ -103,11 +91,14 @@ default_context:
   docker_host_port: "3000"
 ```
 
-Then run:
+### execute cookiecutter
+
 
 ```bash
 cookiecutter https://github.com/rootservices/go-api-cookiecutter --config-file config.yaml
 ```
+
+### Initialize git repository
 
 Once the project is generated then do:
 
