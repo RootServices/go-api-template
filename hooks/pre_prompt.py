@@ -14,8 +14,6 @@ def main():
         with open(target_file, 'r') as file:
             content = file.read()
         
-        # Replace a placeholder with the current timestamp
-        # Example: Replace '{{CURRENT_DATE}}' with the actual date/time
         updated_content = content.replace('{{ now }}', now)
         
         # Write the updated content back to the file
