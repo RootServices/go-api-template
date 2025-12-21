@@ -1,7 +1,11 @@
-.PHONY: clean run test build version compose-up compose-down migrate-up migrate-down migrate-status
+.PHONY: clean initrun test build version compose-up compose-down migrate-up migrate-down migrate-status
 BUILD=`git rev-parse --short HEAD`
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 DATABASE_URL=postgres://{{cookiecutter.entity_name_lower}}_user:{{cookiecutter.entity_name_lower}}_password@localhost:5432/{{cookiecutter.entity_name_lower}}_api?sslmode=disable
+
+init:
+	go mod init {{cookiecutter.module_name}}
+	go mod tidy
 
 version:
 	echo "{" > internal/version/version.json

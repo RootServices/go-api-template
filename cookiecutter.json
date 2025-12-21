@@ -1,5 +1,5 @@
 {
-    "entity_name": "Product",
+    "entity_name": "Project",
     "entity_name_lower": "{{ cookiecutter.entity_name|lower }}",
     "project_name": "Go API Project",
     "project_slug": "go-api-project",

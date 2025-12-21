@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/rootservices/shop-api/internal/gcp"
+	"{{cookiecutter.module_name}}/internal/gcp"
 )
 
 // structs to help fetching secrets from gcp
