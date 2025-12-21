@@ -1,4 +1,4 @@
-.PHONY: clean initrun test build version compose-up compose-down migrate-up migrate-down migrate-status
+.PHONY: clean init run test build version compose-up compose-down migrate-up migrate-down migrate-status
 BUILD=`git rev-parse --short HEAD`
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 DATABASE_URL=postgres://{{cookiecutter.entity_name_lower}}_user:{{cookiecutter.entity_name_lower}}_password@localhost:5432/{{cookiecutter.entity_name_lower}}_api?sslmode=disable
@@ -15,7 +15,7 @@ version:
 
 run: version
 	@echo "Building and running the application with build: $(BUILD)"
-	go run ./cmd/main.go
+	export $$(cat ./env/local.env | grep -v ^# | xargs) && go run ./cmd/main.go
 
 run-docker:
 	docker run -p {{cookiecutter.docker_host_port}}:8080 {{cookiecutter.docker_image_name}}
