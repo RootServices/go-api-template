@@ -3,6 +3,7 @@ package gcp
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
@@ -20,6 +21,7 @@ type SecretRepository interface {
 
 // secretRepository is the concrete implementation of SecretRepository.
 type secretRepository struct {
+	log    *slog.Logger
 	client Client
 }
 
@@ -43,23 +45,23 @@ func (c *client) Close() error {
 
 // NewSecretRepository creates a new SecretRepository.
 // It uses Application Default Credentials (ADC) for authentication.
-func NewSecretRepository(ctx context.Context) (SecretRepository, error) {
+func NewSecretRepository(ctx context.Context, log *slog.Logger) (SecretRepository, error) {
 	secretManagerClient, err := secretmanager.NewClient(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create secret manager client: %w", err)
 	}
 	// wrapper on top of the client to make it mockable.
 	client := &client{secretManagerClient: secretManagerClient}
-	return &secretRepository{client: client}, nil
+	return &secretRepository{client: client, log: log}, nil
 }
 
 // GetSecret retrieves a secret from GCP Secret Manager.
-// projectID: GCP project ID (e.g., "my-project")
+// projectNumber: GCP project number (e.g., "1234567890")
 // secretID: Secret name (e.g., "my-secret")
 // version: Secret version (e.g., "latest", "1", "2") - defaults to "latest" if empty
-func (r *secretRepository) GetSecret(ctx context.Context, projectID, secretID, version string) (string, error) {
-	if projectID == "" {
-		return "", fmt.Errorf("projectID cannot be empty")
+func (r *secretRepository) GetSecret(ctx context.Context, projectNumber, secretID, version string) (string, error) {
+	if projectNumber == "" {
+		return "", fmt.Errorf("projectNumber cannot be empty")
 	}
 	if secretID == "" {
 		return "", fmt.Errorf("secretID cannot be empty")
@@ -69,7 +71,7 @@ func (r *secretRepository) GetSecret(ctx context.Context, projectID, secretID, v
 	}
 
 	// Build the resource name for the secret version.
-	name := fmt.Sprintf("projects/%s/secrets/%s/versions/%s", projectID, secretID, version)
+	name := fmt.Sprintf("projects/%s/secrets/%s/versions/%s", projectNumber, secretID, version)
 
 	// Access the secret version.
 	req := &secretmanagerpb.AccessSecretVersionRequest{

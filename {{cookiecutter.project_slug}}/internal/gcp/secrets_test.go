@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"log/slog"
 	"testing"
 
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
@@ -25,43 +26,43 @@ func (c *fakeSecretClient) Close() error {
 
 func TestSecretRepository_GetSecret_ValidationErrors(t *testing.T) {
 	tests := []struct {
-		name      string
-		projectID string
-		secretID  string
-		version   string
-		wantErr   bool
-		errMsg    string
+		name          string
+		projectNumber string
+		secretID      string
+		version       string
+		wantErr       bool
+		errMsg        string
 	}{
 		{
-			name:      "empty project ID",
-			projectID: "",
-			secretID:  "my-secret",
-			version:   "latest",
-			wantErr:   true,
-			errMsg:    "projectID cannot be empty",
+			name:          "empty project number",
+			projectNumber: "",
+			secretID:      "my-secret",
+			version:       "latest",
+			wantErr:       true,
+			errMsg:        "projectNumber cannot be empty",
 		},
 		{
-			name:      "empty secret ID",
-			projectID: "my-project",
-			secretID:  "",
-			version:   "latest",
-			wantErr:   true,
-			errMsg:    "secretID cannot be empty",
+			name:          "empty secret ID",
+			projectNumber: "1234567890",
+			secretID:      "",
+			version:       "latest",
+			wantErr:       true,
+			errMsg:        "secretID cannot be empty",
 		},
 		{
-			name:      "empty project ID and secret ID",
-			projectID: "",
-			secretID:  "",
-			version:   "latest",
-			wantErr:   true,
-			errMsg:    "projectID cannot be empty",
+			name:          "empty project number and secret ID",
+			projectNumber: "",
+			secretID:      "",
+			version:       "latest",
+			wantErr:       true,
+			errMsg:        "projectNumber cannot be empty",
 		},
 		{
-			name:      "empty version defaults to latest",
-			projectID: "my-project",
-			secretID:  "my-secret",
-			version:   "",
-			wantErr:   false, // Will error because client is nil, but passes validation
+			name:          "empty version defaults to latest",
+			projectNumber: "1234567890",
+			secretID:      "my-secret",
+			version:       "",
+			wantErr:       false, // Will error because client is nil, but passes validation
 		},
 	}
 
@@ -70,9 +71,10 @@ func TestSecretRepository_GetSecret_ValidationErrors(t *testing.T) {
 			// Create a mock repository (we can't actually connect without credentials)
 			repo := &secretRepository{
 				client: &fakeSecretClient{},
+				log:    slog.Default(),
 			}
 
-			_, err := repo.GetSecret(context.Background(), tt.projectID, tt.secretID, tt.version)
+			_, err := repo.GetSecret(context.Background(), tt.projectNumber, tt.secretID, tt.version)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSecret() error = %v, wantErr %v", err, tt.wantErr)

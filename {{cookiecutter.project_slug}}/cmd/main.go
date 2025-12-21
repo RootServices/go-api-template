@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 
+	"{{cookiecutter.module_name}}/internal/config"
 	"{{cookiecutter.module_name}}/internal/db"
 	"{{cookiecutter.module_name}}/internal/entity"
 	"{{cookiecutter.module_name}}/internal/logger"
@@ -26,15 +27,19 @@ func main() {
 	logger.Init(version)
 	log := slog.Default()
 
-	// Get database URL from environment
-	databaseURL := os.Getenv("DATABASE_URL")
-	if databaseURL == "" {
-		log.Error("DATABASE_URL environment variable is required")
+	bootstrap, err := config.NewBootStrap(ctx, log)
+	if err != nil {
+		log.Error("failed to initialize bootstrap", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-
+	cfg, err := bootstrap.Load(ctx)
+	if err != nil {
+		log.Error("failed to load config", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
 	// Initialize database connection
-	db := db.MakeDb(databaseURL, log)
+	makeDb := db.MakeDbFactory(cfg.Env)
+	db := makeDb(cfg.DB.DSN, log)
 
 	// Initialize repository
 	{{cookiecutter.entity_name_lower}}Repo := repository.NewEntityRepository[entity.{{cookiecutter.entity_name}}](db)
