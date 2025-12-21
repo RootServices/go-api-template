@@ -2,7 +2,7 @@
 
 {{cookiecutter.project_description}} 
 
-## Best Practices
+## Design Principles
 
 This project follows practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
 
@@ -13,6 +13,7 @@ This project follows practices from the [Grafana Labs blog post on building Go A
 - Graceful shutdown with signal handling
 - Repository pattern for external dependencies
 - Interface-based design for testability
+- [Environment files](docs/environment-file.md) for configuration
 
 ## API Endpoints
 
@@ -25,50 +26,6 @@ This project follows practices from the [Grafana Labs blog post on building Go A
 - POST /api/v1/{{cookiecutter.entity_name_lower}}
 - PUT /api/v1/{{cookiecutter.entity_name_lower}}/{id}
 - DELETE /api/v1/{{cookiecutter.entity_name_lower}}/{id}
-
-## Project Structure
-
-```
-.
-├── cmd/
-│   └── main.go              # Application entry point
-├── internal/
-│   ├── gcp/
-│   │   ├── secrets.go       # GCP Secret Manager
-│   │   └── secrets_test.go  # GCP Secret Manager tests
-│   ├── handler/
-│   │   ├── encoding_test.go # JSON encoding utilities tests
-│   │   └── encoding.go      # JSON encoding utilities
-│   │   ├── handlers_test.go # Handler tests
-│   │   └── handlers.go      # HTTP request handlers
-│   ├── logger/
-│   │   ├── logger.go        # Logging utilities
-│   │   └── logger_test.go   # Logger tests
-│   ├── server/
-│   │   ├── routes.go        # HTTP server routes / API surface
-│   │   ├── server.go        # HTTP server setup
-│   │   └── server_test.go   # HTTP server integration tests
-│   ├── service/
-│   │   ├── {{cookiecutter.entity_name_lower}}_service.go        # Service layer
-│   │   ├── {{cookiecutter.entity_name_lower}}_service_test.go   # Service layer tests
-│   ├── repository/
-│   │   ├── {{cookiecutter.entity_name_lower}}_repository.go        # Repository layer
-│   │   ├── {{cookiecutter.entity_name_lower}}_repository_test.go   # Repository layer tests  
-│   ├── middleware/
-│   │   ├── after.go         # post processing middleware
-│   │   ├── before.go        # pre processing middleware
-│   │   └── before_test.go   # pre processing middleware tests
-│   ├── migrations/
-│   │   ├── 20251130172527_create_{{cookiecutter.entity_name_lower}}s_table.go         # migration file
-│   ├── version/
-│   │   ├── version.go       # read from version.json and store in struct
-│   │   └── version_test.go  # read from version.json and store in struct tests
-├── docker-compose.yml       # docker-compose configuration, psql, and this application
-├── Dockerfile               # Multi-stage Docker build
-├── Makefile                 # Build and test commands
-├── go.mod                   # Go module dependencies
-└── README.md                # This file
-```
 
 ## Prerequisites
 
