@@ -4,7 +4,7 @@
 
 ## Best Practices
 
-This project follows best practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
+This project follows practices from the [Grafana Labs blog post on building Go APIs](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/):
 
 - Dependency injection through function parameters
 - Handler functions return `http.Handler` instead of using `http.HandlerFunc` directly
@@ -18,9 +18,6 @@ This project follows best practices from the [Grafana Labs blog post on building
 
 ### Health Check
 - GET /healthz
-
-### Hello World
-- GET /api/v1/hello
 
 ### {{cookiecutter.entity_name}}
 - GET /api/v1/{{cookiecutter.entity_name_lower}}

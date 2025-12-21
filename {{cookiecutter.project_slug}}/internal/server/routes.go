@@ -8,7 +8,6 @@ import (
 )
 
 func addRoutes(mux *http.ServeMux, version version.Version, deps Dependencies) {
-	mux.Handle("GET /api/v1/hello", handler.HandleHelloWorld())
 	mux.Handle("GET /healthz", handler.HandleHealthz(version))
 	mux.Handle("/", http.NotFoundHandler())
 
