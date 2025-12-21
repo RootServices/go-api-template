@@ -59,14 +59,6 @@ func TestTemplateGenerationAndTest(t *testing.T) {
 		t.Fatalf("generated project directory does not exist: %s", projectDir)
 	}
 
-	// download go dependencies
-	cmd = exec.Command("make", "init")
-	cmd.Dir = projectDir
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("failed to run make init: %v\nOutput: %s", err, output)
-	}
-
 	// Initialize git repository (required for Makefile version generation)
 	cmd = exec.Command("git", "init")
 	cmd.Dir = projectDir
