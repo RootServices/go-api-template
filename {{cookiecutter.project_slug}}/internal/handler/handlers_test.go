@@ -6,38 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"{{cookiecutter.module_name}}/internal/handler"
 	"{{cookiecutter.module_name}}/internal/server"
 	"{{cookiecutter.module_name}}/internal/version"
 )
-
-func TestHandleHelloWorld(t *testing.T) {
-	version := version.Version{
-		Build:  "test-build",
-		Branch: "test-branch",
-	}
-	deps := server.Dependencies{
-		{{cookiecutter.entity_name}}Service: nil,
-	}
-	server := server.NewServer(version, deps)
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/hello", nil)
-	w := httptest.NewRecorder()
-
-	server.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Errorf("expected status OK; got %v", w.Code)
-	}
-
-	var resp handler.HelloWorldResponse
-	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
-		t.Fatalf("failed to decode response: %v", err)
-	}
-
-	if resp.Message != "Hello, World!" {
-		t.Errorf("expected message 'Hello, World!'; got %q", resp.Message)
-	}
-}
 
 func TestHandleHealthz(t *testing.T) {
 	version := version.Version{

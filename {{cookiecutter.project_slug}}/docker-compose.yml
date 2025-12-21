@@ -24,6 +24,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - path: env/local.env
+        required: true
     ports:
       - "{{cookiecutter.docker_host_port}}:8080"
     environment:
