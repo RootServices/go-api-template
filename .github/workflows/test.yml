@@ -7,9 +7,9 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v3
       - name: use go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version: '1.24'
+          go-version: '{{ cookiecutter.go_version }}'
       - name: Install cookiecutter
         run: |
           apt-get update && apt-get install -y python3-pip git

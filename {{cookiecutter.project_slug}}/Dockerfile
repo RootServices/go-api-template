@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.24 AS builder
+FROM golang:{{ cookiecutter.go_version }} AS builder
 
 WORKDIR /app
 
