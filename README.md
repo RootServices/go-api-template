@@ -20,7 +20,7 @@ This template generates a Go REST API project with:
 ## Prerequisites
 
 - Python 3.7+ (for cookiecutter)
-- Go 1.24.0 or later
+- Go 1.26 or later
 - Docker
 
 ## Quick Start
@@ -57,7 +57,7 @@ cookiecutter /path/to/go-api-template
 | `docker_image_name` | Docker image name | Auto-generated | "product-api" |
 | `entity_name` | Name of the entity to be used in the API (e.g., "Product") | "Product" | "Product" |
 | `entity_name_lower` | Lowercase version of entity_name | "product" | "product" |
-| `go_version` | Go version | "1.24.0" | "1.23.0" |
+| `go_version` | Go version | "1.26" | "1.23.0" |
 | `module_name` | Go module import path | github.com/... | "github.com/rootservices/product-api" |
 | `now` | Current timestamp in UTC | Auto-generated with UTC | "20251130172527" |
 | `project_description` | Short project description | "A Go REST API..." | "API for managing products" |
@@ -86,7 +86,7 @@ default_context:
   project_slug: "product-api"
   module_name: "github.com/rootservices/product-api"
   project_description: "A REST API for products"
-  go_version: "1.24.0"
+  go_version: "1.26"
   docker_image_name: "product-api"
   docker_host_port: "3000"
 ```
