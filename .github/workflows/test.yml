@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: use go
         uses: actions/setup-go@v6
         with:
-          go-version: '{{ cookiecutter.go_version }}'
+          go-version: "{{ cookiecutter.go_version }}"
       - name: Install cookiecutter
         run: |
           apt-get update && apt-get install -y python3-pip git
