@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"cloud.google.com/go/cloudsqlconn"
 	"cloud.google.com/go/cloudsqlconn/postgres/pgxv5"
 
 	"gorm.io/driver/postgres"
@@ -12,7 +13,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-type MakeDbFn func(dsn string, log *slog.Logger) *gorm.DB
+type MakeDbFn func(dsn string, log *slog.Logger) (*gorm.DB, func())
 
 func MakeDbFactory(env string) MakeDbFn {
 	if env == "local" {
@@ -21,7 +22,7 @@ func MakeDbFactory(env string) MakeDbFn {
 	return MakeCloudSQLDb
 }
 
-func MakeLocalDb(dsn string, log *slog.Logger) *gorm.DB {
+func MakeLocalDb(dsn string, log *slog.Logger) (*gorm.DB, func()) {
 	log.Info("connecting to local postgresdb")
 	// Initialize database connection
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -33,18 +34,21 @@ func MakeLocalDb(dsn string, log *slog.Logger) *gorm.DB {
 		log.Error("failed to connect to database", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-	return db
+	return db, func() {}
 }
 
 // this uses the cloud sql connector approach
 // https://github.com/go-gorm/gorm/issues/6991
-func MakeCloudSQLDb(dsn string, log *slog.Logger) *gorm.DB {
+func MakeCloudSQLDb(dsn string, log *slog.Logger) (*gorm.DB, func()) {
 	log.Info("connecting to cloud sql")
-	cleanup, err := pgxv5.RegisterDriver("cloudsql-postgres")
+	cleanup, err := pgxv5.RegisterDriver(
+		"cloudsql-postgres",
+		cloudsqlconn.WithLazyRefresh(),
+		cloudsqlconn.WithIAMAuthN(),
+		cloudsqlconn.WithDefaultDialOptions(cloudsqlconn.WithPrivateIP()))
 	if err != nil {
 		panic(err)
 	}
-	defer cleanup()
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DriverName: "cloudsql-postgres",
@@ -58,7 +62,12 @@ func MakeCloudSQLDb(dsn string, log *slog.Logger) *gorm.DB {
 		log.Error("failed to connect to database", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-	return db
+	return db, func() {
+		err := cleanup()
+		if err != nil {
+			log.Error("failed to cleanup cloud sql driver", slog.String("error", err.Error()))
+		}
+	}
 }
 
 func MakeDbSqlite() (*gorm.DB, error) {
