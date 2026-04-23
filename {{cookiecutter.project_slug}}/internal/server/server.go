@@ -15,7 +15,6 @@ import (
 
 	"{{cookiecutter.module_name}}/internal/logger"
 	"{{cookiecutter.module_name}}/internal/middleware"
-	"{{cookiecutter.module_name}}/internal/service"
 	"{{cookiecutter.module_name}}/internal/version"
 )
 
@@ -76,10 +75,6 @@ type StartServerParams struct {
 	Version         version.Version
 	PortGeneratorFn PortGenerator
 	BlockFn         BlockUntilServerShutdown
-}
-
-type Dependencies struct {
-	{{cookiecutter.entity_name}}Service service.{{cookiecutter.entity_name}}Service
 }
 
 func StartServer(params StartServerParams, deps Dependencies) (*http.Server, error) {

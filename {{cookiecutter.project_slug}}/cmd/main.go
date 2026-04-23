@@ -7,11 +7,8 @@ import (
 
 	"{{cookiecutter.module_name}}/internal/config"
 	"{{cookiecutter.module_name}}/internal/db"
-	"{{cookiecutter.module_name}}/internal/entity"
 	"{{cookiecutter.module_name}}/internal/logger"
-	"{{cookiecutter.module_name}}/internal/repository"
 	"{{cookiecutter.module_name}}/internal/server"
-	"{{cookiecutter.module_name}}/internal/service"
 	"{{cookiecutter.module_name}}/internal/version"
 )
 
@@ -39,11 +36,10 @@ func main() {
 	}
 	// Initialize database connection
 	makeDb := db.MakeDbFactory(cfg.Env)
-	db := makeDb(cfg.DB.DSN, log)
+	db, cleanupFn := makeDb(cfg.DB.DSN, log)
+	defer cleanupFn()
 
-	// Initialize repository
-	{{cookiecutter.entity_name_lower}}Repo := repository.NewEntityRepository[entity.{{cookiecutter.entity_name}}](db)
-	{{cookiecutter.entity_name_lower}}Service := service.New{{cookiecutter.entity_name}}Service({{cookiecutter.entity_name_lower}}Repo)
+	deps := server.NewDeps(ctx, db, cfg, log)
 
 	params := server.StartServerParams{
 		ParentCtx:       ctx,
@@ -52,9 +48,6 @@ func main() {
 		BlockFn:         server.Block,
 	}
 
-	deps := server.Dependencies{
-		{{cookiecutter.entity_name}}Service: {{cookiecutter.entity_name_lower}}Service,
-	}
 	_, err = server.StartServer(params, deps)
 
 	if err != nil {

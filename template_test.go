@@ -8,6 +8,10 @@ import (
 )
 
 func TestTemplateGenerationAndTest(t *testing.T) {
+	// Bypass any custom GOPROXY that might require authentication
+	// to ensure public modules like google.golang.org are fetchable.
+	os.Setenv("GOPROXY", "https://proxy.golang.org,direct")
+
 	// Find cookiecutter binary
 	cookiecutterPath, err := exec.LookPath("cookiecutter")
 	if err != nil {

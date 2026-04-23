@@ -5,7 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+	"time"
 
 	"{{cookiecutter.module_name}}/internal/middleware"
 	"{{cookiecutter.module_name}}/internal/version"
@@ -139,4 +141,39 @@ func TestServer_StartServer(t *testing.T) {
 		t.Fatalf("expected status code %v, got %v", http.StatusOK, resp.StatusCode)
 	}
 	resp.Body.Close()
+}
+
+func TestPort(t *testing.T) {
+	os.Unsetenv("PORT")
+	if Port() != "8080" {
+		t.Errorf("expected 8080, got %s", Port())
+	}
+
+	os.Setenv("PORT", "9090")
+	defer os.Unsetenv("PORT")
+	if Port() != "9090" {
+		t.Errorf("expected 9090, got %s", Port())
+	}
+}
+
+func TestBlock(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	httpServer := &http.Server{}
+	log := slog.Default()
+
+	// Cancel context to trigger shutdown
+	cancel()
+
+	done := make(chan bool)
+	go func() {
+		Block(ctx, httpServer, log)
+		done <- true
+	}()
+
+	select {
+	case <-time.After(2 * time.Second):
+		t.Fatal("Block did not unblock after context cancellation")
+	case <-done:
+		// success
+	}
 }
