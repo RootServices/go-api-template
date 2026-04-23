@@ -91,3 +91,34 @@ func (r *secretRepository) GetSecret(ctx context.Context, projectNumber, secretI
 func (r *secretRepository) Close() error {
 	return r.client.Close()
 }
+
+// FakeSecretRepo is a fake implementation of SecretRepository used in local development.
+// It is required for running this applicaiton with Docker locally because it does not
+// have tokens to access GCP Secret Manager.
+type FakeSecretRepo struct {
+	Secrets map[string]string
+	Err     error
+}
+
+// NewFakeSecretRepo creates a new FakeSecretRepo.
+func NewFakeSecretRepo() *FakeSecretRepo {
+	return &FakeSecretRepo{
+		Secrets: make(map[string]string),
+	}
+}
+
+// GetSecret retrieves a secret from the fake repository using the secretID.
+func (f *FakeSecretRepo) GetSecret(ctx context.Context, projectID, secretID, version string) (string, error) {
+	if f.Err != nil {
+		return "", f.Err
+	}
+	if v, ok := f.Secrets[secretID]; ok {
+		return v, nil
+	}
+	return "", fmt.Errorf("secret not found: %s", secretID)
+}
+
+// Close implements the SecretRepository interface.
+func (f *FakeSecretRepo) Close() error {
+	return nil
+}
