@@ -42,13 +42,17 @@ func TestBootStrap_Load(t *testing.T) {
 		{
 			name: "local environment",
 			vars: map[string]string{
-				"ENV":         "local",
-				"DB_USER":     "user",
-				"DB_PASSWORD": "password",
-				"DB_HOST":     "localhost",
-				"DB_NAME":     "shop-api",
-				"DB_PORT":     "5432",
-				"DB_SSL_MODE": "disable",
+				"ENV":             "local",
+				"DB_USER":         "user",
+				"DB_PASSWORD":     "password",
+				"DB_HOST":         "localhost",
+				"DB_NAME":         "shop-api",
+				"DB_PORT":         "5432",
+				"DB_SSL_MODE":     "disable",
+				"GCP_PROJECT_ID":  "project-id",
+				"ORIGINS_ALLOWED": "https://localhost:1234",
+				"METHODS_ALLOWED": "GET,HEAD,POST,PUT,OPTIONS",
+				"HEADERS_ALLOWED": "X-Requested-With",
 			},
 			mockRepo: &MockSecretRepository{},
 			wantConfig: &AppConfig{
@@ -56,6 +60,7 @@ func TestBootStrap_Load(t *testing.T) {
 				DB: Database{
 					DSN: "host=localhost user=user password=password dbname=shop-api port=5432 sslmode=disable",
 				},
+				ProjectID: "project-id",
 			},
 			wantErr: false,
 		},
@@ -64,19 +69,20 @@ func TestBootStrap_Load(t *testing.T) {
 			vars: map[string]string{
 				"ENV":                "prod",
 				"GCP_PROJECT_NUMBER": "1234567890",
-				"DB_USER_KEY":        "db-user-secret",
+				"DB_USER":            "api",
 				"DB_PASSWORD_KEY":    "db-pass-secret",
 				"DB_HOST":            "prod-db",
 				"DB_NAME":            "shop-api",
 				"DB_PORT":            "5432",
 				"DB_SSL_MODE":        "disable",
+				"GCP_PROJECT_ID":     "project-id",
+				"ORIGINS_ALLOWED":    "https://localhost:1234",
+				"METHODS_ALLOWED":    "GET,HEAD,POST,PUT,OPTIONS",
+				"HEADERS_ALLOWED":    "X-Requested-With",
 			},
 			mockRepo: &MockSecretRepository{
 				GetSecretFunc: func(ctx context.Context, projectNumber, secretID, version string) (string, error) {
 					if projectNumber == "1234567890" && version == "latest" {
-						if secretID == "db-user-secret" {
-							return "prod-user", nil
-						}
 						if secretID == "db-pass-secret" {
 							return "prod-pass", nil
 						}
@@ -87,8 +93,9 @@ func TestBootStrap_Load(t *testing.T) {
 			wantConfig: &AppConfig{
 				Env: "prod",
 				DB: Database{
-					DSN: "host=prod-db user=prod-user password=prod-pass dbname=shop-api port=5432 sslmode=disable",
+					DSN: "host=prod-db user=api password=prod-pass dbname=shop-api port=5432 sslmode=disable",
 				},
+				ProjectID: "project-id",
 			},
 			wantErr: false,
 		},
@@ -97,7 +104,8 @@ func TestBootStrap_Load(t *testing.T) {
 			vars: map[string]string{
 				"ENV":                "prod",
 				"GCP_PROJECT_NUMBER": "1234567890",
-				"DB_USER_KEY":        "db-user-secret",
+				"DB_USER":            "api",
+				"DB_PASSWORD_KEY":    "db-pass-secret",
 			},
 			mockRepo: &MockSecretRepository{
 				GetSecretFunc: func(ctx context.Context, projectNumber, secretID, version string) (string, error) {

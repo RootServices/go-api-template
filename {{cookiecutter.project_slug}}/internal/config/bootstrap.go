@@ -13,13 +13,11 @@ import (
 
 type SecretCoordinates struct {
 	ProjectNumber string
-	DBUserKey     string
 	DBPasswordKey string
 }
 
 type Secrets struct {
 	DBPassword string
-	DBUser     string
 }
 
 // structs returned by load fn
@@ -28,8 +26,11 @@ type Database struct {
 }
 
 type AppConfig struct {
-	Env string
-	DB  Database
+	Env                   string
+	DB                    Database
+	ProjectID             string
+	StorageBucket         string
+	StorageServiceAccount string
 }
 
 type GetVariable func(key string) string
@@ -49,6 +50,16 @@ type BootStrap interface {
 	FetchSecrets(ctx context.Context, coords SecretCoordinates) (Secrets, error)
 }
 
+func BootStrapFactory(ctx context.Context, log *slog.Logger) (BootStrap, error) {
+	getVariable := readVariable
+
+	if getVariable("ENV") == "local" {
+		return NewLocalBootStrap(context.Background(), log)
+	}
+
+	return NewBootStrap(context.Background(), log)
+}
+
 func NewBootStrap(ctx context.Context, log *slog.Logger) (BootStrap, error) {
 	repo, err := gcp.NewSecretRepository(ctx, log)
 	if err != nil {
@@ -58,6 +69,14 @@ func NewBootStrap(ctx context.Context, log *slog.Logger) (BootStrap, error) {
 	return &bootStrap{
 		getVariable: readVariable,
 		repo:        repo,
+		log:         log,
+	}, nil
+}
+
+func NewLocalBootStrap(ctx context.Context, log *slog.Logger) (BootStrap, error) {
+	return &bootStrap{
+		getVariable: readVariable,
+		repo:        gcp.NewFakeSecretRepo(),
 		log:         log,
 	}, nil
 }
@@ -74,20 +93,18 @@ func (b *bootStrap) Load(ctx context.Context) (*AppConfig, error) {
 	dbName := b.getVariable("DB_NAME")
 	dbPort := b.getVariable("DB_PORT")
 	dbSSLMode := b.getVariable("DB_SSL_MODE")
+	dbUser := b.getVariable("DB_USER")
 
 	if env == "local" {
-		dbUser := b.getVariable("DB_USER")
 		dbPassword := b.getVariable("DB_PASSWORD")
 		dsn = fmt.Sprintf(dsnTemplate, dbHost, dbUser, dbPassword, dbName, dbPort, dbSSLMode)
 	} else {
 		// get secrts from gcp
 		gcpProjectNumber := b.getVariable("GCP_PROJECT_NUMBER")
-		dbUserKey := b.getVariable("DB_USER_KEY")
 		dbPasswordKey := b.getVariable("DB_PASSWORD_KEY")
 
 		coords := SecretCoordinates{
 			ProjectNumber: gcpProjectNumber,
-			DBUserKey:     dbUserKey,
 			DBPasswordKey: dbPasswordKey,
 		}
 
@@ -96,8 +113,10 @@ func (b *bootStrap) Load(ctx context.Context) (*AppConfig, error) {
 			return nil, fmt.Errorf("failed to fetch secrets: %w", err)
 		}
 
-		dsn = fmt.Sprintf(dsnTemplate, dbHost, secrets.DBUser, secrets.DBPassword, dbName, dbPort, dbSSLMode)
+		dsn = fmt.Sprintf(dsnTemplate, dbHost, dbUser, secrets.DBPassword, dbName, dbPort, dbSSLMode)
 	}
+
+	storageBucket := b.getVariable("STORAGE_BUCKET")
 
 	// 3. Populate AppConfig
 	appConfig := &AppConfig{
@@ -105,6 +124,9 @@ func (b *bootStrap) Load(ctx context.Context) (*AppConfig, error) {
 		DB: Database{
 			DSN: dsn,
 		},
+		ProjectID:             b.getVariable("GCP_PROJECT_ID"),
+		StorageBucket:         storageBucket,
+		StorageServiceAccount: b.getVariable("STORAGE_SERVICE_ACCOUNT"),
 	}
 
 	return appConfig, nil
@@ -113,14 +135,6 @@ func (b *bootStrap) Load(ctx context.Context) (*AppConfig, error) {
 // fetches secrets from gcp
 func (b *bootStrap) FetchSecrets(ctx context.Context, coords SecretCoordinates) (Secrets, error) {
 	secrets := Secrets{}
-
-	if coords.DBUserKey != "" && coords.ProjectNumber != "" {
-		val, err := b.repo.GetSecret(ctx, coords.ProjectNumber, coords.DBUserKey, "latest")
-		if err != nil {
-			return Secrets{}, fmt.Errorf("failed to fetch secret 'dbUser' (project: %s, secret: %s, version: latest): %w", coords.ProjectNumber, coords.DBUserKey, err)
-		}
-		secrets.DBUser = val
-	}
 
 	if coords.DBPasswordKey != "" && coords.ProjectNumber != "" {
 		val, err := b.repo.GetSecret(ctx, coords.ProjectNumber, coords.DBPasswordKey, "latest")
